@@ -22,6 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/project.css">
+  <link rel="stylesheet" href="../css/blueprint.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230c0c0f'/><polygon points='35,25 75,50 35,75' fill='%23D8FF3E'/></svg>">
 </head>
 <body>
@@ -42,21 +43,60 @@
     <span class="mono case-num">CASE 02 · PRODUCT DESIGN</span>
     <h1 class="case-title"><span class="ln">Designing the</span><span class="ln">NEXUS Line</span></h1>
     <p class="case-standfirst">BigBattery wanted its own way into the lithium home-energy market.
-      As the only product designer, I took NEXUS from concept sketches to a $1M+ battery, then
-      designed the inverters and the second generation around it.</p>
+      As the only product designer, I took the exterior of NEXUS from concept sketches to a $1M+
+      battery, then carried that design language across the inverters and the second generation.</p>
 
     <div class="case-media">
       <img src="../assets/case-nexus-blueprint.webp" width="1586" height="992"
            alt="Dimensioned blueprint of the line: NEXUS, NEXUS 2, APEX-10K and APEX-6.5K with front, side and top views">
     </div>
 
-    <section class="case-section">
-      <h2>At a Glance</h2>
-      <div class="case-results">
-        <div class="r"><b>$1.4M+</b><span>Sales across the line, standalone and in kits</span></div>
-        <div class="r"><b>670</b><span>Units sold in the first 11 months</span></div>
-        <div class="r"><b>4</b><span>Products designed and launched</span></div>
-        <div class="r"><b>&lt;$150</b><span>Launch animation set, down from $1,000s</span></div>
+    <!-- SHEET 01. Bar segments are proportional to dollars: 1010 + 300 + 124 + 11.7. -->
+    <section class="bp-band" aria-labelledby="sheet-1">
+      <div class="bp-inner">
+        <header class="bp-head" data-seq>
+          <span class="bp-sheet">Sheet 01 / The line in numbers</span>
+          <h2 id="sheet-1">$1.4M+ across four products.</h2>
+          <p>Sales across the line, standalone and in kits, from the first launch through
+             September 2026.</p>
+        </header>
+
+        <figure class="bp-sales" data-seq style="margin: 0">
+          <div class="bp-dim"><span>$1.4M+ total sales</span></div>
+          <div class="bp-bar" aria-hidden="true">
+            <i style="--v: 1010; --c: var(--bp-1)"></i>
+            <i style="--v: 300; --c: var(--bp-2)"></i>
+            <i style="--v: 124; --c: var(--bp-3)"></i>
+            <i style="--v: 11.7; --c: var(--bp-4)"></i>
+          </div>
+          <ul class="bp-series">
+            <li style="--c: var(--bp-1)"><b>$1.01M</b><strong>NEXUS, standalone</strong><span>528 units</span></li>
+            <li style="--c: var(--bp-2); --d: 150ms"><b>+$300K</b><strong>NEXUS in system kits</strong><span>Includes the kit's other components</span></li>
+            <li style="--c: var(--bp-3); --d: 300ms"><b>$124K</b><strong>APEX inverters, standalone</strong><span>135 units</span></li>
+            <li style="--c: var(--bp-4); --d: 450ms"><b>$11.7K</b><strong>NEXUS 2, standalone</strong><span>7 units in its first 4 weeks</span></li>
+          </ul>
+        </figure>
+
+        <div class="bp-stats" data-seq>
+          <div><b>670</b><span>Units sold in the first 11 months</span></div>
+          <div><b>4</b><span>Products designed and launched</span></div>
+          <div><b>&lt;$150</b><span>Launch animation set, down from $1,000s</span></div>
+        </div>
+
+        <figure class="bp-tl" style="margin-inline: 0">
+          <h3 class="bp-sub">From concept to a second generation</h3>
+          <div class="bp-tl-track">
+            <div class="bp-tl-rail" aria-hidden="true"></div>
+            <div class="bp-tl-fill" aria-hidden="true"></div>
+            <ol>
+              <li class="is-on"><b>CONCEPT</b><span>Mockup rounds, measurements and color</span></li>
+              <li class="is-on"><b>APPROVAL</b><span>Executive review signs off NEXUS</span></li>
+              <li class="is-on"><b>OCT 2025</b><span>NEXUS launches</span><img src="../assets/product-nexus.webp" alt="" loading="lazy"></li>
+              <li class="is-on"><b>FEB 2026</b><span>APEX-6.5K and APEX-10K join as NEXUS kits</span><img src="../assets/product-apex-10k.webp" alt="" loading="lazy"></li>
+              <li class="is-on"><b>SEP 2026</b><span>NEXUS 2 launches</span><img src="../assets/product-nexus-2.webp" alt="" loading="lazy"></li>
+            </ol>
+          </div>
+        </figure>
       </div>
     </section>
 
@@ -65,32 +105,22 @@
       <p>BigBattery wanted its own flagship in the lithium home-energy market: a battery for
          off-grid homeowners who want to be self-sufficient, running on their own solar and their
          own storage.</p>
-      <p>I was the only product designer on it, and on every product that followed. The first
-         NEXUS became the base the rest of the line was built on: the inverters that turned it
-         into a complete system, then a second generation.</p>
+      <p>I was the only product designer on it, and on every product that followed. The units
+         start from a supplier's base hardware, and my work was everything a buyer sees and
+         touches on the outside. The first NEXUS set the look the rest of the line was built on:
+         the inverters that turned it into a complete system, then a second generation.</p>
     </section>
 
     <section class="case-section">
       <h2>My Role</h2>
       <ul>
-        <li>Form and industrial design: body and panel measurements, tolerances and label placement</li>
+        <li>Exterior design on the supplier's base unit: panel measurements, tolerances and label placement</li>
         <li>Color: the Pantone specification for the casing and the branding</li>
         <li>Concept iteration across multiple rounds of mockups, through executive review to approval</li>
         <li>Packaging: the retail box for the APEX inverters, designed with AI and CorelDRAW</li>
         <li>Launch: product animation, website infographics, sale banners and email creative</li>
         <li>Coordination with the B2B and marketing teams, so product, packaging and launch shipped together</li>
       </ul>
-    </section>
-
-    <section class="case-section">
-      <h2>Timeline</h2>
-      <ol class="timeline">
-        <li><b>CONCEPT</b><span>Mockup rounds, measurements and color</span></li>
-        <li><b>APPROVAL</b><span>Executive review signs off NEXUS</span></li>
-        <li><b>OCT 2025</b><span>NEXUS launches</span></li>
-        <li><b>FEB 2026</b><span>APEX-6.5K and APEX-10K join as NEXUS kits</span></li>
-        <li><b>SEP 2026</b><span>NEXUS 2 launches</span></li>
-      </ol>
     </section>
 
     <section class="case-section">
@@ -113,87 +143,152 @@
       <p class="case-note">NEXUS 2 was developed under the working name Nexus Pro. These are its approval documents.</p>
     </section>
 
-    <section class="case-section">
-      <h2>The Products</h2>
+    <!-- SHEET 02. Callout coordinates are percentages of the square sheet, read
+         off each render. Step order matches view order; js/blueprint.js pairs them. -->
+    <section class="bp-band" aria-labelledby="sheet-2">
+      <div class="bp-inner">
+        <header class="bp-head" data-seq>
+          <span class="bp-sheet">Sheet 02 / The products</span>
+          <h2 id="sheet-2">Four products, one family.</h2>
+          <p>The exterior is what a buyer sees and remembers, and it carries from one product
+             to the next. Scroll through the line.</p>
+        </header>
 
-      <article class="product-block" id="nexus">
-        <div class="product-shot"><img src="../assets/product-nexus.webp" alt="NEXUS 14.3 kWh battery" loading="lazy"></div>
-        <div>
-          <span class="product-kicker">GEN 1 · OCT 2025</span>
-          <h3>NEXUS</h3>
-          <p>The flagship: a 14.3 kWh home battery on casters, built for off-grid homes running on
-             solar. The vertical wordmark and the front charge display became the family look
-             that everything after it inherited.</p>
-          <div class="product-facts">
-            <div><b>528</b><span>Units sold</span></div>
-            <div><b>$1.01M</b><span>Standalone sales</span></div>
-            <div><b>+$300K</b><span>In system kits</span></div>
+        <div class="pv">
+          <div class="pv-stage">
+            <figure class="pv-view is-on">
+              <div class="pv-imgs"><img src="../assets/nexus-view-front.webp" width="1000" height="1000" alt="NEXUS battery from the front, with a round charge display reading 100%"></div>
+              <svg class="pv-lines" viewBox="0 0 100 100" aria-hidden="true">
+                <line pathLength="1" x1="54.5" y1="22" x2="74" y2="13"/><circle cx="50" cy="24" r="1"/>
+                <line pathLength="1" x1="70" y1="86" x2="82" y2="73"/><circle cx="68" cy="88" r="1"/>
+              </svg>
+              <span class="pv-tag" style="--x: 80%; --y: 11%">Charge display</span>
+              <span class="pv-tag" style="--x: 86%; --y: 71%">Casters</span>
+            </figure>
+            <figure class="pv-view">
+              <div class="pv-imgs"><img src="../assets/nexus-view-side.webp" width="1000" height="1000" alt="NEXUS battery from the side, with NEXUS running vertically up the panel"></div>
+              <svg class="pv-lines" viewBox="0 0 100 100" aria-hidden="true">
+                <line pathLength="1" x1="55" y1="41" x2="72" y2="31"/><circle cx="53" cy="42" r="1"/>
+              </svg>
+              <span class="pv-tag" style="--x: 80%; --y: 29%">Vertical wordmark</span>
+            </figure>
+            <figure class="pv-view">
+              <div class="pv-imgs duo">
+                <img src="../assets/product-apex-10k.webp" alt="APEX-10K inverter">
+                <img src="../assets/product-apex-6.5k.webp" alt="APEX-6.5K inverter">
+              </div>
+              <svg class="pv-lines" viewBox="0 0 100 100" aria-hidden="true">
+                <line pathLength="1" x1="26" y1="37" x2="44" y2="18"/><circle cx="25" cy="39" r="1"/>
+                <line pathLength="1" x1="74" y1="37" x2="56" y2="18"/><circle cx="75" cy="39" r="1"/>
+              </svg>
+              <span class="pv-tag" style="--x: 50%; --y: 15%">Matched pair</span>
+            </figure>
+            <figure class="pv-view">
+              <div class="pv-imgs"><img src="../assets/product-nexus-2.webp" alt="NEXUS 2 battery at three-quarter view"></div>
+              <svg class="pv-lines" viewBox="0 0 100 100" aria-hidden="true">
+                <line pathLength="1" x1="34" y1="18.5" x2="24" y2="11"/><circle cx="35" cy="20.5" r="1"/>
+                <line pathLength="1" x1="74" y1="42" x2="84" y2="33"/><circle cx="72" cy="43" r="1"/>
+              </svg>
+              <span class="pv-tag" style="--x: 16%; --y: 8%">Same display</span>
+              <span class="pv-tag" style="--x: 85%; --y: 30%">Same wordmark</span>
+            </figure>
+          </div>
+
+          <div class="pv-steps">
+            <article class="pv-step" id="nexus">
+              <span class="product-kicker">GEN 1 · OCT 2025</span>
+              <h3>NEXUS</h3>
+              <p>The flagship: a 14.3 kWh home battery on casters, built for off-grid homes running
+                 on solar.</p>
+              <div class="product-facts">
+                <div><b>528</b><span>Units sold</span></div>
+                <div><b>$1.01M</b><span>Standalone sales</span></div>
+                <div><b>+$300K</b><span>In system kits</span></div>
+              </div>
+            </article>
+            <article class="pv-step">
+              <span class="product-kicker">GEN 1 · THE FAMILY LOOK</span>
+              <h3>Two details that stuck</h3>
+              <p>The vertical wordmark and the front charge display became the family look that
+                 everything after it inherited.</p>
+            </article>
+            <article class="pv-step" id="apex">
+              <span class="product-kicker">INVERTERS · FEB 2026</span>
+              <h3>APEX-6.5K &amp; APEX-10K</h3>
+              <p>The inverters that turn NEXUS into a complete system. Styled as a matched pair with
+                 the battery and sold alongside it in kits, so a buyer picks one system rather than
+                 researching parts. I also designed their retail packaging.</p>
+              <div class="product-facts">
+                <div><b>135</b><span>Units sold</span></div>
+                <div><b>$124K</b><span>Standalone sales</span></div>
+                <div><b>2</b><span>Models, one family</span></div>
+              </div>
+            </article>
+            <article class="pv-step" id="nexus-2">
+              <span class="product-kicker">GEN 2 · SEP 2026</span>
+              <h3>NEXUS 2</h3>
+              <p>The second generation, at 16 kWh. It keeps the family look and launches with a
+                 12-year warranty, 8,000+ deep cycles, and a full set of safety protections
+                 including cold-weather heating.</p>
+              <div class="product-facts">
+                <div><b>7</b><span>Units sold</span></div>
+                <div><b>$11.7K</b><span>Standalone sales</span></div>
+                <div><b>4 WKS</b><span>First weeks on sale</span></div>
+              </div>
+            </article>
           </div>
         </div>
-      </article>
-    </section>
 
-    <section class="case-section">
-      <article class="product-block" id="apex">
-        <div class="product-shot duo">
-          <img src="../assets/product-apex-6.5k.webp" alt="APEX-6.5K inverter" loading="lazy">
-          <img src="../assets/product-apex-10k.webp" alt="APEX-10K inverter" loading="lazy">
-        </div>
-        <div>
-          <span class="product-kicker">INVERTERS · FEB 2026</span>
-          <h3>APEX-6.5K &amp; APEX-10K</h3>
-          <p>The inverters that turn NEXUS into a complete system. Designed as a matched pair with
-             the battery and sold alongside it in kits, so a buyer picks one system rather than
-             researching parts. I also designed their retail packaging.</p>
-          <div class="product-facts">
-            <div><b>135</b><span>Units sold</span></div>
-            <div><b>$124K</b><span>Standalone sales</span></div>
-            <div><b>2</b><span>Models, one family</span></div>
-          </div>
-        </div>
-      </article>
-      <figure class="case-figure">
-        <img src="../assets/apex-product-page.webp" width="1200" height="1195" loading="lazy"
-             alt="APEX product page section: three benefit tiles, installation scenes and a wiring diagram for each model">
-        <figcaption>APEX product page: benefits in plain language, then the wiring inputs for each model</figcaption>
-      </figure>
-    </section>
-
-    <section class="case-section">
-      <article class="product-block" id="nexus-2">
-        <div class="product-shot"><img src="../assets/product-nexus-2.webp" alt="NEXUS 2 16 kWh battery" loading="lazy"></div>
-        <div>
-          <span class="product-kicker">GEN 2 · SEP 2026</span>
-          <h3>NEXUS 2</h3>
-          <p>The second generation, at 16 kWh. It keeps the family look and launches with a
-             12-year warranty, 8,000+ deep cycles, and a full set of safety protections
-             including cold-weather heating.</p>
-          <div class="product-facts">
-            <div><b>7</b><span>Units sold</span></div>
-            <div><b>$11.7K</b><span>Standalone sales</span></div>
-            <div><b>4 WKS</b><span>On sale so far</span></div>
-          </div>
-        </div>
-      </article>
-    </section>
-
-    <section class="case-section">
-      <h2>The Render Workflow</h2>
-      <p>The gen 1 launch animation was outsourced to a render artist: thousands of dollars and a
-         two to three week turnaround. For NEXUS 2 I built an AI workflow instead, producing
-         several animated renders of the new product for under $150, with the same impact at
-         launch or better.</p>
-      <div class="compare">
-        <figure>
-          <video src="../assets/nexus-render-gen1.mp4" poster="../assets/nexus-render-gen1-poster.webp" muted loop playsinline autoplay preload="metadata"
-                 aria-label="Gen 1 NEXUS launch render"></video>
-          <figcaption><span>GEN 1 · OUTSOURCED</span><b>$1,000s, 2 to 3 weeks</b></figcaption>
+        <figure class="bp-figure">
+          <img src="../assets/apex-product-page.webp" width="1200" height="1195" loading="lazy"
+               alt="APEX product page section: three benefit tiles, installation scenes and a wiring diagram for each model">
+          <figcaption>APEX product page: benefits in plain language, then the wiring inputs for each model</figcaption>
         </figure>
-        <figure>
-          <video src="../assets/nexus.mp4" poster="../assets/nexus-poster.webp" muted loop playsinline autoplay preload="metadata"
-                 aria-label="AI-workflow NEXUS launch render"></video>
-          <figcaption><span>GEN 2 · AI WORKFLOW</span><b class="win">Under $150</b></figcaption>
-        </figure>
+
+        <section class="bp-section" aria-labelledby="sheet-3">
+          <header class="bp-head" data-seq>
+            <span class="bp-sheet">Sheet 03 / The render workflow</span>
+            <h2 id="sheet-3">Same launch impact, a fraction of the cost.</h2>
+            <p>The gen 1 launch animation was outsourced to a render artist. For NEXUS 2 I built an
+               AI workflow instead, producing several animated renders of the new product with the
+               same impact at launch or better.</p>
+          </header>
+
+          <!-- scale: $1,000 sits at 60% of the track, so under $150 is 9% -->
+          <figure data-seq style="margin: 0">
+            <ul class="cost">
+              <li>
+                <div class="cost-name"><strong style="font-weight: 500">Gen 1, outsourced</strong><span>2 to 3 week turnaround</span></div>
+                <div class="cost-track"><div class="cost-bar open" style="--w: 78%; --c: var(--bp-2)"></div><div class="cost-val">$1,000s</div></div>
+              </li>
+              <li>
+                <div class="cost-name"><strong style="font-weight: 500">Gen 2, AI workflow</strong><span>Several animated renders</span></div>
+                <div class="cost-track"><div class="cost-bar" style="--w: 9%; --c: var(--bp-1); --d: 250ms"></div><div class="cost-val">Under $150</div></div>
+              </li>
+            </ul>
+            <div class="cost-axis" aria-hidden="true"><span style="left: 0">$0</span><span style="left: 60%">$1,000</span></div>
+          </figure>
+
+          <ol class="flow" data-seq>
+            <li><b>01</b><strong>Concept</strong><span>Scenes and shot ideas, worked out in Claude</span></li>
+            <li style="--d: 200ms"><b>02</b><strong>Generate</strong><span>AI footage of the product in Higgsfield</span></li>
+            <li style="--d: 400ms"><b>03</b><strong>Composite</strong><span>Edit, overlays and sound in DaVinci Resolve and Final Cut Pro</span></li>
+            <li style="--d: 600ms"><b>04</b><strong>Launch</strong><span>Animated renders across the launch creative</span></li>
+          </ol>
+
+          <div class="compare">
+            <figure>
+              <video src="../assets/nexus-render-gen1.mp4" poster="../assets/nexus-render-gen1-poster.webp" muted loop playsinline autoplay preload="metadata"
+                     aria-label="Gen 1 NEXUS launch render"></video>
+              <figcaption><span>GEN 1 · OUTSOURCED</span><b>$1,000s, 2 to 3 weeks</b></figcaption>
+            </figure>
+            <figure>
+              <video src="../assets/nexus.mp4" poster="../assets/nexus-poster.webp" muted loop playsinline autoplay preload="metadata"
+                     aria-label="AI-workflow NEXUS launch render"></video>
+              <figcaption><span>GEN 2 · AI WORKFLOW</span><b class="win">Under $150</b></figcaption>
+            </figure>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -253,5 +348,6 @@
   </main>
 
   <script src="../js/project.js"></script>
+  <script src="../js/blueprint.js"></script>
 </body>
 </html>
