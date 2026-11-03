@@ -1,0 +1,313 @@
+/* ============================================================
+   JB PORTFOLIO / results-band.css
+   Case 01 results: a full-bleed charcoal break from the tan page, with one
+   chart per story. Everything renders in its final state by default;
+   js/results-band.js adds .is-armed to rewind a chart, then .is-in to play it,
+   so no-JS and reduced-motion readers still get the complete charts.
+   ============================================================ */
+
+.results-band {
+  --rb-bg: #2b2d31;
+  --rb-text: #f4f4f1;
+  --rb-dim: rgba(244, 244, 241, 0.68);
+  --rb-rule: rgba(244, 244, 241, 0.14);
+  --rb-blue: #6f9bff;      /* lifted from --acid, which is too dark on charcoal */
+  --rb-gray: #a3abb8;
+  --rb-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* bleeds out of .case's column to the viewport edges */
+  width: 100vw;
+  margin: 0 0 clamp(50px, 9vh, 90px) calc(50% - 50vw);
+  padding: clamp(56px, 10vh, 110px) 0;
+  background: var(--rb-bg);
+  color: var(--rb-text);
+}
+/* same width and gutters as .case, so the band's content sits on the text column */
+.rb-inner { max-width: 1100px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 60px); }
+
+.rb-kicker {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rb-blue);
+}
+.rb-head { margin-bottom: clamp(32px, 6vh, 56px); }
+.rb-head h2 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2rem, 5.4vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  margin: 14px 0 16px;
+  text-wrap: balance;
+}
+.rb-head p { max-width: 60ch; font-size: clamp(1rem, 1.5vw, 1.2rem); color: var(--rb-dim); }
+
+/* hairline dividers between panels, the same gap technique as .toolkit */
+.rb-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rb-rule);
+  border: 1px solid var(--rb-rule);
+}
+.viz { margin: 0; background: var(--rb-bg); padding: clamp(22px, 3vw, 38px); min-width: 0; }
+.viz-wide { grid-column: span 12; }
+.viz-7 { grid-column: span 7; }
+.viz-5 { grid-column: span 5; }
+.viz h3 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  line-height: 1.15;
+  margin: 10px 0 18px;
+  text-wrap: balance;
+}
+.viz-note { font-size: 0.95rem; line-height: 1.45; color: var(--rb-dim); margin-top: 18px; }
+
+/* ---------- catalogue: every dot is a product page ---------- */
+.viz-catalogue {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+}
+.rb-big {
+  display: flex; align-items: center; gap: 0.25em;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 6vw, 4.6rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.rb-big .from { color: var(--rb-dim); }
+.rb-arrow { width: 0.8em; height: 0.5em; flex: none; overflow: visible; }
+.rb-arrow path { fill: none; stroke: var(--rb-blue); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* column-first flow: 30 cols x 6 rows, so the 30 kept dots are one clean block
+   of exactly one sixth. Built by js/results-band.js from data-total/data-keep. */
+.dots {
+  display: grid;
+  grid-template-rows: repeat(6, auto);
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: clamp(3px, 0.6vw, 7px);
+}
+.dots i {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(244, 244, 241, 0.12);
+  transition: background-color 0.5s ease var(--d, 0ms);
+}
+.dots i.keep { background: var(--rb-blue); }
+.viz.is-armed .dots i { background: rgba(244, 244, 241, 0.62); }
+.viz.is-in .dots i { background: rgba(244, 244, 241, 0.12); }
+.viz.is-in .dots i.keep { background: var(--rb-blue); }
+
+/* ---------- legend, shared ---------- */
+.rb-legend {
+  display: flex; flex-wrap: wrap; gap: 6px 16px;
+  list-style: none;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rb-dim);
+  margin-bottom: 18px;
+}
+.rb-legend li { display: flex; align-items: center; gap: 7px; }
+.rb-legend i { width: 14px; height: 3px; border-radius: 2px; background: var(--c); flex: none; }
+
+/* ---------- slope chart: two measurements, joined by a line ---------- */
+.slope {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(116px, 26%, 170px);
+  column-gap: 16px;
+  padding: 22px 0 0;
+}
+.slope-plot { position: relative; height: clamp(210px, 26vw, 270px); }
+.slope-plot svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.slope-grid line { stroke: var(--rb-rule); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.slope-lines line {
+  stroke: var(--c); stroke-width: 2.5; stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  transition: opacity 0.25s ease;
+}
+/* a clip wipe rather than a dash offset: dash lengths don't survive
+   non-scaling-stroke, and this stretches with the plot */
+.slope-lines { clip-path: inset(-12px); transition: clip-path 1.5s var(--rb-ease); }
+.viz.is-armed .slope-lines { clip-path: inset(-12px 100% -12px -12px); }
+.viz.is-in .slope-lines { clip-path: inset(-12px); }
+
+.slope-dot {
+  position: absolute;
+  width: 10px; height: 10px; margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 2px var(--rb-bg);
+  transition: opacity 0.25s ease, transform 0.45s var(--rb-ease) 1.15s;
+}
+.viz.is-armed .slope-dot.end { transform: scale(0); }
+.viz.is-in .slope-dot.end { transform: none; }
+
+.slope-labels { position: relative; }
+.slope-label {
+  position: absolute; left: 0; right: 0;
+  transform: translateY(-50%);
+  transition: opacity 0.45s ease 1.05s;
+}
+.viz.is-armed .slope-label { opacity: 0; }
+.viz.is-in .slope-label { opacity: 1; }
+.slope-label b {
+  display: block;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.45rem, 2.8vw, 2.1rem);
+  line-height: 1;
+}
+.slope-label span { display: block; font-size: 0.82rem; line-height: 1.2; color: var(--rb-dim); margin-top: 3px; }
+/* hovering any part of a series quiets the other two */
+.slope:has([data-s="a"]:hover) .slope-lines [data-s]:not([data-s="a"]),
+.slope:has([data-s="b"]:hover) .slope-lines [data-s]:not([data-s="b"]),
+.slope:has([data-s="c"]:hover) .slope-lines [data-s]:not([data-s="c"]) { opacity: 0.25; }
+
+.slope-axis {
+  grid-column: 1;
+  display: flex; justify-content: space-between;
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rb-dim);
+}
+
+/* ---------- ring: two arcs drawn around one centre ---------- */
+.ring { position: relative; width: min(100%, 250px); margin: 0 auto; }
+.ring svg { display: block; width: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 11; }
+.ring .track { stroke: var(--rb-rule); }
+.ring .arc {
+  stroke: var(--c);
+  stroke-linecap: round;
+  stroke-dasharray: var(--v) 100;
+  transition: stroke-dasharray 1.4s var(--rb-ease), opacity 0.2s ease;
+}
+.viz.is-armed .ring .arc { stroke-dasharray: 0 100; opacity: 0; }
+.viz.is-in .ring .arc { stroke-dasharray: var(--v) 100; opacity: 1; }
+.ring-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.ring-center b {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2rem, 3.6vw, 2.7rem);
+  line-height: 1;
+}
+.ring-center span {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rb-dim);
+  margin-top: 5px;
+}
+
+/* ---------- diverging bars: % change either side of a zero line ---------- */
+.bars { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 14px; align-items: center; }
+.bar-name { font-size: 0.92rem; line-height: 1.2; }
+.bar-name small { display: block; font-size: 0.78rem; color: var(--rb-dim); }
+/* scale runs -45 to +90: zero sits a third of the way along, and both ends
+   leave room for a value label at phone width */
+.bar-track { position: relative; height: 26px; }
+.bar-track::before {
+  content: ""; position: absolute; top: -8px; bottom: -8px; left: 33.333%;
+  width: 1px; background: rgba(244, 244, 241, 0.34);
+}
+.bar {
+  position: absolute; top: 7px; height: 12px;
+  background: var(--rb-blue);
+  transition: transform 1.1s var(--rb-ease) var(--d, 0ms), filter 0.2s ease;
+}
+.bar.up { left: 33.333%; width: calc(var(--v) / 135 * 100%); border-radius: 0 4px 4px 0; transform-origin: left; }
+.bar.down { right: 66.667%; width: calc(var(--v) / 135 * 100%); border-radius: 4px 0 0 4px; transform-origin: right; }
+.viz.is-armed .bar { transform: scaleX(0); }
+.viz.is-in .bar { transform: none; }
+.bar-row:hover .bar { filter: brightness(1.2); }
+.bar-val {
+  position: absolute; top: 50%;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+/* values wait for their marks, rather than floating where a bar will end up */
+.bar-val, .col b { transition: opacity 0.45s ease 0.7s; }
+.viz.is-armed .bar-val, .viz.is-armed .col b { opacity: 0; }
+.viz.is-in .bar-val, .viz.is-in .col b { opacity: 1; }
+.bar-val.up { left: calc(33.333% + var(--v) / 135 * 100% + 7px); }
+.bar-val.down { right: calc(66.667% + var(--v) / 135 * 100% + 7px); }
+
+/* ---------- paired columns: before and after, measured from zero ---------- */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 3vw, 32px); }
+.col-group { min-width: 0; }
+.col-pair {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+  height: clamp(170px, 19vw, 200px);
+  border-bottom: 1px solid rgba(244, 244, 241, 0.34);
+}
+.col { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 0; text-align: center; }
+.col b { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; margin-bottom: 6px; color: var(--rb-text); }
+.col.before b { color: var(--rb-dim); font-weight: 400; }
+.col i {
+  display: block;
+  width: min(100%, 34px);
+  height: var(--h);
+  background: var(--c);
+  border-radius: 4px 4px 0 0;
+  transform-origin: bottom;
+  transition: transform 1.2s var(--rb-ease) var(--d, 0ms);
+}
+.viz.is-armed .col i { transform: scaleY(0); }
+.viz.is-in .col i { transform: none; }
+.col-name { font-size: 0.9rem; line-height: 1.2; margin-top: 10px; }
+
+/* ---------- table view + method note ---------- */
+.rb-foot { margin-top: 22px; }
+.rb-foot p { max-width: 74ch; font-size: 0.82rem; line-height: 1.55; color: var(--rb-dim); }
+.rb-table { margin-top: 14px; }
+.rb-table summary {
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rb-blue);
+}
+.rb-table table { width: 100%; max-width: 620px; margin-top: 14px; border-collapse: collapse; font-size: 0.92rem; }
+.rb-table th, .rb-table td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rb-rule); font-weight: 400; }
+.rb-table th { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rb-dim); }
+.rb-table td:last-child { white-space: nowrap; font-family: var(--mono); font-size: 0.84rem; }
+
+/* HUD chrome is fixed over the page, so anything over the band switches to its
+   light variant (toggled per element in js/results-band.js) */
+.hud-item.on-dark { color: #f4f4f1; --hud-blue: #6f9bff; }
+.hud-corner.on-dark { --hud-blue: #6f9bff; }
+
+@media (max-width: 860px) {
+  .viz-7, .viz-5 { grid-column: span 12; }
+  .viz-catalogue { grid-template-columns: 1fr; }
+  /* 18 x 10 keeps the kept dots a clean block: three full columns */
+  .dots { grid-template-rows: repeat(10, auto); }
+  .bar-row { grid-template-columns: 1fr; gap: 4px; }
+  /* the name sits directly above the track here, so the zero line can't overshoot */
+  .bar-track::before { top: 0; bottom: 0; }
+}
+
+/* .rb-arming: rewinding a chart must be instant, or it plays backwards on load */
+.results-band.rb-arming * { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .results-band * { transition: none !important; }
+}

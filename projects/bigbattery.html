@@ -22,6 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/project.css">
+  <link rel="stylesheet" href="../css/results-band.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230c0c0f'/><polygon points='35,25 75,50 35,75' fill='%23D8FF3E'/></svg>">
 </head>
 <body>
@@ -187,21 +188,167 @@
          cart and checkout were confirmed completing as designed.</p>
     </section>
 
-    <section class="case-section">
-      <h2>The Results</h2>
-      <div class="case-results">
-        <div class="r"><b>180+ → 30</b><span>Product pages, an 83% reduction</span></div>
-        <div class="r"><b>+75%</b><span>Organic traffic after consolidation</span></div>
-        <div class="r"><b>+28%</b><span>Product page conversion, HYROS verified</span></div>
-        <div class="r"><b>70% → 40%</b><span>Checkout abandonment</span></div>
-        <div class="r"><b>+125%</b><span>Completed order growth</span></div>
-        <div class="r"><b>+68%</b><span>Product discovery metrics</span></div>
-        <div class="r"><b>+34%</b><span>Time on page, complex system pages</span></div>
-        <div class="r"><b>−21%</b><span>Bounce rate on visual-system landing pages</span></div>
-        <div class="r"><b>+18%</b><span>Ad CTR on infographic-led creative</span></div>
-        <div class="r"><b>+25%</b><span>Email open-to-click via Klaviyo</span></div>
-        <div class="r"><b>+18%</b><span>Average order value</span></div>
-        <div class="r"><b>+22%</b><span>Customer lifetime value</span></div>
+    <!-- Full-bleed charcoal break. Slope positions: top = (225 - value) / 125,
+         so 225 sits at 0%, 175 at 40%, 128 at 77.6% and the 100 start at 100%. -->
+    <section class="results-band" aria-labelledby="results-title">
+      <div class="rb-inner">
+        <header class="rb-head">
+          <span class="rb-kicker">The Results</span>
+          <h2 id="results-title">Fewer pages. More finished orders.</h2>
+          <p>What changed once the catalogue, the product pages and the checkout were rebuilt
+             around the buyer.</p>
+        </header>
+
+        <div class="rb-grid">
+          <figure class="viz viz-wide viz-catalogue">
+            <div>
+              <span class="rb-kicker">The catalogue</span>
+              <h3>One page for each product family</h3>
+              <div class="rb-big">
+                <span class="from">180+</span>
+                <svg class="rb-arrow" viewBox="0 0 24 12" aria-hidden="true"><path d="M1 6h21M17 1l5 5-5 5"/></svg>
+                <span>30</span>
+              </div>
+              <p class="viz-note">Product pages, 83% fewer. Each dot is a page.</p>
+            </div>
+            <div class="dots" data-total="180" data-keep="30" aria-hidden="true"></div>
+          </figure>
+
+          <figure class="viz viz-7">
+            <span class="rb-kicker">The business</span>
+            <h3>More visitors, more of them buying</h3>
+            <ul class="rb-legend" aria-hidden="true">
+              <li data-s="a" style="--c: var(--rb-blue)"><i></i>Completed orders</li>
+              <li data-s="b" style="--c: var(--rb-text)"><i></i>Organic traffic</li>
+              <li data-s="c" style="--c: var(--rb-gray)"><i></i>Page conversion</li>
+            </ul>
+            <div class="slope">
+              <div class="slope-plot">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                  <g class="slope-grid">
+                    <line x1="0" y1="100" x2="100" y2="100"/>
+                    <line x1="0" y1="60" x2="100" y2="60"/>
+                    <line x1="0" y1="20" x2="100" y2="20"/>
+                  </g>
+                  <g class="slope-lines">
+                    <line data-s="c" style="--c: var(--rb-gray)" x1="0" y1="100" x2="100" y2="77.6"/>
+                    <line data-s="b" style="--c: var(--rb-text)" x1="0" y1="100" x2="100" y2="40"/>
+                    <line data-s="a" style="--c: var(--rb-blue)" x1="0" y1="100" x2="100" y2="0"/>
+                  </g>
+                </svg>
+                <span class="slope-dot" style="--c: var(--rb-text); left: 0; top: 100%"></span>
+                <span class="slope-dot end" data-s="c" style="--c: var(--rb-gray); left: 100%; top: 77.6%"></span>
+                <span class="slope-dot end" data-s="b" style="--c: var(--rb-text); left: 100%; top: 40%"></span>
+                <span class="slope-dot end" data-s="a" style="--c: var(--rb-blue); left: 100%; top: 0"></span>
+              </div>
+              <div class="slope-labels">
+                <div class="slope-label" data-s="a" style="top: 0"><b>+125%</b><span>Completed orders</span></div>
+                <div class="slope-label" data-s="b" style="top: 40%"><b>+75%</b><span>Organic traffic</span></div>
+                <div class="slope-label" data-s="c" style="top: 77.6%"><b>+28%</b><span>Page conversion, HYROS verified</span></div>
+              </div>
+              <div class="slope-axis" aria-hidden="true"><span>Before</span><span>After</span></div>
+            </div>
+          </figure>
+
+          <figure class="viz viz-5">
+            <span class="rb-kicker">The checkout</span>
+            <h3>Carts abandoned at the final step</h3>
+            <ul class="rb-legend" aria-hidden="true">
+              <li style="--c: var(--rb-gray)"><i></i>Before: 70%</li>
+              <li style="--c: var(--rb-blue)"><i></i>After: 40%</li>
+            </ul>
+            <div class="ring">
+              <svg viewBox="0 0 200 200" aria-hidden="true">
+                <circle class="track" cx="100" cy="100" r="90"/>
+                <circle class="arc" pathLength="100" style="--c: var(--rb-gray); --v: 70" cx="100" cy="100" r="90"/>
+                <circle class="track" cx="100" cy="100" r="72"/>
+                <circle class="arc" pathLength="100" style="--c: var(--rb-blue); --v: 40" cx="100" cy="100" r="72"/>
+              </svg>
+              <div class="ring-center"><b>40%</b><span>Was 70%</span></div>
+            </div>
+            <p class="viz-note">Three in ten carts used to reach a finished order. Now it's six in ten.</p>
+          </figure>
+
+          <figure class="viz viz-7">
+            <span class="rb-kicker">The experience</span>
+            <h3>Easier to find, worth staying for</h3>
+            <ul class="bars">
+              <li class="bar-row">
+                <div class="bar-name">Product discovery</div>
+                <div class="bar-track"><span class="bar up" style="--v: 68"></span><span class="bar-val up" style="--v: 68">+68%</span></div>
+              </li>
+              <li class="bar-row">
+                <div class="bar-name">Time on page<small>Complex system pages</small></div>
+                <div class="bar-track"><span class="bar up" style="--v: 34; --d: 90ms"></span><span class="bar-val up" style="--v: 34">+34%</span></div>
+              </li>
+              <li class="bar-row">
+                <div class="bar-name">Email open-to-click<small>Klaviyo</small></div>
+                <div class="bar-track"><span class="bar up" style="--v: 25; --d: 180ms"></span><span class="bar-val up" style="--v: 25">+25%</span></div>
+              </li>
+              <li class="bar-row">
+                <div class="bar-name">Ad click-through<small>Infographic-led creative</small></div>
+                <div class="bar-track"><span class="bar up" style="--v: 18; --d: 270ms"></span><span class="bar-val up" style="--v: 18">+18%</span></div>
+              </li>
+              <li class="bar-row">
+                <div class="bar-name">Bounce rate<small>Visual-system landing pages. Lower is better</small></div>
+                <div class="bar-track"><span class="bar down" style="--v: 21; --d: 360ms"></span><span class="bar-val down" style="--v: 21">−21%</span></div>
+              </li>
+            </ul>
+          </figure>
+
+          <figure class="viz viz-5">
+            <span class="rb-kicker">The customer</span>
+            <h3>Each buyer worth more</h3>
+            <ul class="rb-legend" aria-hidden="true">
+              <li style="--c: var(--rb-gray)"><i></i>Before</li>
+              <li style="--c: var(--rb-blue)"><i></i>After</li>
+            </ul>
+            <!-- heights are value x 0.65 of the plot, measured from zero, with
+                 headroom for the labels: 100 = 65%, 118 = 76.7%, 122 = 79.3% -->
+            <div class="cols">
+              <div class="col-group">
+                <div class="col-pair" aria-hidden="true">
+                  <div class="col before"><b>100</b><i style="--c: var(--rb-gray); --h: 65%"></i></div>
+                  <div class="col"><b>118</b><i style="--c: var(--rb-blue); --h: 76.7%; --d: 120ms"></i></div>
+                </div>
+                <div class="col-name">Average order value <b>+18%</b></div>
+              </div>
+              <div class="col-group">
+                <div class="col-pair" aria-hidden="true">
+                  <div class="col before"><b>100</b><i style="--c: var(--rb-gray); --h: 65%; --d: 200ms"></i></div>
+                  <div class="col"><b>122</b><i style="--c: var(--rb-blue); --h: 79.3%; --d: 320ms"></i></div>
+                </div>
+                <div class="col-name">Customer lifetime value <b>+22%</b></div>
+              </div>
+            </div>
+          </figure>
+        </div>
+
+        <div class="rb-foot">
+          <p>Each line and column joins two measurements, before and after the redesign, with the
+             starting point set to 100 so different metrics share one scale. They show the size of
+             the change, not the path it took to get there.</p>
+          <details class="rb-table">
+            <summary>View all results as a table</summary>
+            <table>
+              <thead><tr><th scope="col">Metric</th><th scope="col">Change</th></tr></thead>
+              <tbody>
+                <tr><td>Product pages</td><td>180+ → 30 (−83%)</td></tr>
+                <tr><td>Completed order growth</td><td>+125%</td></tr>
+                <tr><td>Organic traffic after consolidation</td><td>+75%</td></tr>
+                <tr><td>Product page conversion, HYROS verified</td><td>+28%</td></tr>
+                <tr><td>Checkout abandonment</td><td>70% → 40%</td></tr>
+                <tr><td>Product discovery metrics</td><td>+68%</td></tr>
+                <tr><td>Time on page, complex system pages</td><td>+34%</td></tr>
+                <tr><td>Email open-to-click via Klaviyo</td><td>+25%</td></tr>
+                <tr><td>Ad CTR on infographic-led creative</td><td>+18%</td></tr>
+                <tr><td>Bounce rate on visual-system landing pages</td><td>−21%</td></tr>
+                <tr><td>Average order value</td><td>+18%</td></tr>
+                <tr><td>Customer lifetime value</td><td>+22%</td></tr>
+              </tbody>
+            </table>
+          </details>
+        </div>
       </div>
     </section>
 
@@ -255,5 +402,6 @@
   </main>
 
   <script src="../js/project.js"></script>
+  <script src="../js/results-band.js"></script>
 </body>
 </html>
