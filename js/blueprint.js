@@ -8,6 +8,23 @@
   const canObserve = "IntersectionObserver" in window;
   const scrollWork = [];
 
+  /* climbs to the figure already in the HTML, slowing as it lands, then stops:
+     the number never runs past the real total or implies live sales data */
+  const countUp = (el) => {
+    const to = Number(el.dataset.countTo);
+    const DURATION_MS = 2200;
+    const start = performance.now();
+    const frame = (now) => {
+      const t = Math.min(1, (now - start) / DURATION_MS);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = `$${(to * eased).toFixed(1)}M`;
+      if (t < 1) requestAnimationFrame(frame);
+      else el.closest("h2").classList.add("is-counted");
+    };
+    el.textContent = "$0.0M";
+    requestAnimationFrame(frame);
+  };
+
   /* parts play top to bottom: each waits until it has scrolled up past the
      trigger line, and never starts before the part above it */
   if (!reduceMotion && canObserve) {
@@ -23,6 +40,7 @@
       if (played >= reached) return;
       played += 1;
       parts[played].classList.add("is-in");
+      parts[played].querySelectorAll("[data-count-to]").forEach(countUp);
       /* a part already scrolled off the top has no audience, so don't wait on it */
       const seen = parts[played].getBoundingClientRect().bottom > 0;
       timer = setTimeout(playNext, seen ? GAP_MS : 0);

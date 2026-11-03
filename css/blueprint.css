@@ -66,6 +66,64 @@
 }
 .bp-note { font-size: 0.82rem; line-height: 1.55; color: var(--dim); max-width: 74ch; margin-top: 22px; }
 
+/* ---------- "and counting": the count-up lands, then only the signals keep moving ---------- */
+.bp-count { font-variant-numeric: tabular-nums; }
+.bp-plus { transition: opacity 0.4s ease; }
+/* .is-armed stays on after playing, so "not yet counted" is what hides these */
+.bp-head.is-armed h2:not(.is-counted) .bp-plus { opacity: 0; }
+.bp-head.is-armed h2:not(.is-counted) .bp-up { visibility: hidden; }
+/* a small chevron that keeps rising beside the figure */
+.bp-up {
+  display: inline-block;
+  position: relative;
+  width: 0.34em; height: 0.7em;
+  margin-left: 0.14em;
+  vertical-align: 0.02em;
+}
+.bp-up::before {
+  content: "";
+  position: absolute; left: 0; bottom: 0;
+  width: 0.34em; height: 0.34em;
+  border-top: 0.07em solid var(--acid);
+  border-right: 0.07em solid var(--acid);
+  transform: rotate(-45deg);
+  animation: bp-rise 2s var(--bp-ease) infinite;
+}
+@keyframes bp-rise {
+  0% { opacity: 0; bottom: 0; }
+  25% { opacity: 1; }
+  70%, 100% { opacity: 0; bottom: 0.42em; }
+}
+.bp-live {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--bone);
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: 3px;
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+.bp-live:hover { color: var(--acid); border-color: var(--acid); }
+.bp-live i {
+  position: relative; flex: none;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--acid);
+}
+.bp-live i::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: var(--acid);
+  animation: bp-ping 2s ease-out infinite;
+}
+@keyframes bp-ping {
+  0% { transform: scale(1); opacity: 0.7; }
+  80%, 100% { transform: scale(3); opacity: 0; }
+}
+
 .bp-head.is-armed { opacity: 0; transform: translateY(24px); }
 .bp-head { transition: opacity 0.8s ease, transform 0.9s var(--bp-ease); }
 .bp-head.is-in { opacity: 1; transform: none; }
@@ -302,4 +360,6 @@
 .bp-arming * { transition: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .bp-band * { transition: none !important; }
+  .bp-up::before { animation: none; opacity: 1; bottom: 0.2em; }
+  .bp-live i::after { animation: none; opacity: 0; }
 }

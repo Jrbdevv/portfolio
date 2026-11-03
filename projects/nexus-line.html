@@ -56,13 +56,14 @@
       <div class="bp-inner">
         <header class="bp-head" data-seq>
           <span class="bp-sheet">Sheet 01 / The line in numbers</span>
-          <h2 id="sheet-1">$1.4M+ across four products.</h2>
-          <p>Sales across the line, standalone and in kits, from the first launch through
-             September 2026.</p>
+          <!-- the HTML holds the real figure; js/blueprint.js only animates up to it -->
+          <h2 id="sheet-1"><span class="bp-count" data-count-to="1.4">$1.4M</span><span class="bp-plus">+</span><span class="bp-up" aria-hidden="true"></span> total sales and counting.</h2>
+          <p>Across four products, standalone and in kits. These figures run through September 2026.</p>
+          <a class="bp-live" href="https://bigbattery.com/" target="_blank" rel="noopener" data-cursor="GO"><i aria-hidden="true"></i>Still selling daily at BigBattery.com ↗</a>
         </header>
 
         <figure class="bp-sales" data-seq style="margin: 0">
-          <div class="bp-dim"><span>$1.4M+ total sales</span></div>
+          <div class="bp-dim"><span>$1.4M+ through Sep 2026</span></div>
           <div class="bp-bar" aria-hidden="true">
             <i style="--v: 1010; --c: var(--bp-1)"></i>
             <i style="--v: 300; --c: var(--bp-2)"></i>
