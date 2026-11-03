@@ -51,11 +51,11 @@
            alt="Dimensioned blueprint of the line: NEXUS, NEXUS 2, APEX-10K and APEX-6.5K with front, side and top views">
     </div>
 
-    <!-- SHEET 01. Bar segments are proportional to dollars: 1010 + 300 + 124 + 11.7. -->
+    <!-- The line in numbers. Bar segments are proportional to dollars: 1010 + 300 + 124 + 11.7. -->
     <section class="bp-band" aria-labelledby="sheet-1">
       <div class="bp-inner">
         <header class="bp-head" data-seq>
-          <span class="bp-sheet">Sheet 01 / The line in numbers</span>
+          <span class="bp-kicker">The line in numbers</span>
           <!-- the HTML holds the real figure; js/blueprint.js only animates up to it -->
           <h2 id="sheet-1"><span class="bp-count" data-count-to="1.4">$1.4M</span><span class="bp-plus">+</span><span class="bp-up" aria-hidden="true"></span> total sales and counting.</h2>
           <p>Across four products, standalone and in kits. These figures run through September 2026.</p>
@@ -144,12 +144,12 @@
       <p class="case-note">NEXUS 2 was developed under the working name Nexus Pro. These are its approval documents.</p>
     </section>
 
-    <!-- SHEET 02. Callout coordinates are percentages of the square sheet, read
+    <!-- The products. Callout coordinates are percentages of the square sheet, read
          off each render. Step order matches view order; js/blueprint.js pairs them. -->
     <section class="bp-band" aria-labelledby="sheet-2">
       <div class="bp-inner">
         <header class="bp-head" data-seq>
-          <span class="bp-sheet">Sheet 02 / The products</span>
+          <span class="bp-kicker">The products</span>
           <h2 id="sheet-2">Four products, one family.</h2>
           <p>The exterior is what a buyer sees and remembers, and it carries from one product
              to the next. Scroll through the line.</p>
@@ -248,7 +248,7 @@
 
         <section class="bp-section" aria-labelledby="sheet-3">
           <header class="bp-head" data-seq>
-            <span class="bp-sheet">Sheet 03 / The render workflow</span>
+            <span class="bp-kicker">The render workflow</span>
             <h2 id="sheet-3">Same launch impact, a fraction of the cost.</h2>
             <p>The gen 1 launch animation was outsourced to a render artist. For NEXUS 2 I built an
                AI workflow instead, producing several animated renders of the new product with the
@@ -290,30 +290,56 @@
             </figure>
           </div>
         </section>
-      </div>
-    </section>
 
-    <section class="case-section" id="creative">
-      <h2>Launch Creative</h2>
-      <p>More than 100 banner and infographic variations across the line: website gallery
-         infographics, homepage sale banners, email headers and compatibility charts. A
-         selection:</p>
-      <!-- ▶ FULL LIBRARY: paste a view-only Canva link here as
-           <a class="mono clip-cta" href="CANVA_LINK">VIEW THE FULL LIBRARY →</a> -->
-      <div class="creative-strip">
-        <video src="../assets/creative-email-header.mp4" poster="../assets/creative-email-header-poster.webp" muted loop playsinline autoplay preload="metadata"
-               aria-label="Animated NEXUS 2 pre-order launch header"></video>
-        <img src="../assets/creative-nexus2-price.webp" alt="NEXUS 2 banner: best price in America, $198 per kWh" loading="lazy">
-        <img src="../assets/creative-nexus2-info-1.webp" alt="NEXUS 2 infographic: 12-year warranty and 8,000+ deep cycles" loading="lazy">
-        <img src="../assets/creative-nexus2-info-2.webp" alt="NEXUS 2 infographic: multiple safety protections" loading="lazy">
-        <img src="../assets/creative-nexus2-info-3.webp" alt="NEXUS 2 infographic: casters, charge display and terminals" loading="lazy">
-        <img src="../assets/case-nexus-line.webp" alt="APEX launch banner: What Blackout?, with both inverters beside a NEXUS battery" loading="lazy">
-        <img src="../assets/creative-apex-ports.webp" alt="APEX infographic labelling the grid, load, generator, battery and PV inputs" loading="lazy">
-        <img src="../assets/creative-compat.webp" alt="Compatibility banner listing ten inverter brands that work with NEXUS" loading="lazy">
+        <section class="bp-section" id="creative" aria-labelledby="creative-title">
+          <header class="bp-head" data-seq>
+            <span class="bp-kicker">Launch creative</span>
+            <h2 id="creative-title">100+ banners, one launch system.</h2>
+            <p>Website gallery infographics, homepage sale banners, email headers and compatibility
+               charts across the line. A selection from each generation:</p>
+          </header>
+          <!-- ▶ FULL LIBRARY: paste a view-only Canva link here as
+               <a class="bp-live" href="CANVA_LINK">VIEW THE FULL LIBRARY →</a> -->
+
+          <!-- js/blueprint.js duplicates each track so the loop is seamless, and only
+               runs them while on screen. Without it, each column scrolls by hand. -->
+          <div class="vc">
+            <div class="vc-col">
+              <h3 class="vc-name">NEXUS</h3>
+              <div class="vc-window"><div class="vc-track">
+                <img src="../assets/creative-nexus-capacity.webp" width="1000" height="625" alt="NEXUS infographic: 15 kWh high capacity, 12-year warranty, and what it can power">
+                <img src="../assets/case-nexus-line.webp" width="1400" height="554" alt="APEX launch banner: What Blackout?, with both inverters beside a NEXUS battery">
+                <img src="../assets/creative-nexus-garage.webp" width="1000" height="833" alt="NEXUS battery and an inverter installed on a garage wall">
+                <img src="../assets/creative-nexus-features.webp" width="1200" height="492" alt="NEXUS key features: performance, protection, design, scalability, chemistry and applications">
+                <img src="../assets/creative-nexus-terminals.webp" width="1200" height="492" alt="NEXUS terminal diagram labelling the battery ID, positive and negative terminals, and RS-485 and CAN ports">
+              </div></div>
+            </div>
+            <div class="vc-col vc-down">
+              <h3 class="vc-name">NEXUS 2</h3>
+              <div class="vc-window"><div class="vc-track">
+                <video src="../assets/creative-email-header.mp4" poster="../assets/creative-email-header-poster.webp" width="1200" height="492" muted loop playsinline autoplay preload="metadata"
+                       aria-label="Animated NEXUS 2 pre-order launch header"></video>
+                <img src="../assets/creative-nexus2-sale.webp" width="1000" height="580" alt="Sale banner: 50% off APEX inverters with a NEXUS 2 kit purchase">
+                <img src="../assets/creative-nexus2-info-1.webp" width="1300" height="813" alt="NEXUS 2 infographic: 12-year warranty and 8,000+ deep cycles">
+                <img src="../assets/creative-nexus2-sleek.webp" width="1000" height="834" alt="NEXUS 2 infographic: sleek and compact design, with a glowing product shot">
+                <img src="../assets/creative-nexus2-price.webp" width="1300" height="534" alt="NEXUS 2 banner: best price in America, $198 per kWh">
+                <img src="../assets/creative-compat.webp" width="1300" height="813" alt="Compatibility banner listing ten inverter brands that work with NEXUS 2">
+                <img src="../assets/creative-nexus2-bogo.webp" width="1000" height="1055" alt="Promotion: buy a NEXUS 2, get an APEX inverter 50% off">
+                <img src="../assets/creative-nexus2-grows.webp" width="1000" height="835" alt="NEXUS 2 infographic: power that grows with you, up to 15 units">
+                <img src="../assets/creative-nexus-compat-wide.webp" width="1000" height="410" alt="Wide banner: NEXUS 2 and APEX, seamlessly compatible with ten inverter brands">
+                <img src="../assets/creative-nexus2-info-2.webp" width="1300" height="813" alt="NEXUS 2 infographic: multiple safety protections">
+                <img src="../assets/creative-nexus2-info-3.webp" width="1300" height="813" alt="NEXUS 2 infographic: casters, charge display and terminals">
+              </div></div>
+            </div>
+          </div>
+
+          <p class="bp-note">Alongside this line I ran the creative side of the launch campaigns for
+             BigBattery's solar and golf-cart products, working closely with the Director of
+             Integrated Brand and Marketing on launch strategy to get these products in front of
+             solar buyers. The campaigns drove $457K in combined B2B and B2C pipeline growth and
+             535K+ video views.</p>
+        </section>
       </div>
-      <p class="case-note">Alongside this line I ran the launch campaigns for BigBattery's solar and
-         golf-cart products: $457K in combined B2B and B2C pipeline growth and 535K+ campaign
-         video views.</p>
     </section>
 
     <section class="case-section">

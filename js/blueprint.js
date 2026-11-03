@@ -103,6 +103,47 @@
     steps.forEach((s) => stepIo.observe(s));
   }
 
+  /* creative columns: duplicate each track for a seamless loop, set the speed from
+     its height so both columns drift at the same pace, and run only while on screen */
+  const vc = document.querySelector(".vc");
+  if (vc && !reduceMotion && canObserve) {
+    const SPEED_PX_S = 34;
+    const tracks = [...vc.querySelectorAll(".vc-track")];
+    tracks.forEach((track) => {
+      [...track.children].forEach((item) => {
+        const copy = item.cloneNode(true);
+        copy.setAttribute("aria-hidden", "true");
+        copy.removeAttribute("aria-label");
+        if (copy.tagName === "IMG") copy.alt = "";
+        track.appendChild(copy);
+      });
+    });
+    const measure = () => {
+      tracks.forEach((track) => {
+        const col = track.closest(".vc-col");
+        col.style.setProperty("--vc-dur", `${Math.max(20, track.offsetHeight / 2 / SPEED_PX_S).toFixed(1)}s`);
+        col.style.setProperty("--vc-h", `${track.parentElement.offsetHeight}px`);
+      });
+    };
+    vc.classList.add("is-live");
+    measure();
+    window.addEventListener("load", measure);
+    window.addEventListener("resize", measure);
+    new IntersectionObserver(([e]) => vc.classList.toggle("is-visible", e.isIntersecting)).observe(vc);
+
+    /* the reveal waits until enough of the columns is on screen to actually be seen */
+    document.documentElement.classList.add("bp-arming");
+    vc.classList.add("is-armed");
+    void vc.offsetWidth;   // commit before transitions return
+    document.documentElement.classList.remove("bp-arming");
+    const revealIo = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      vc.classList.add("is-in");
+      revealIo.disconnect();
+    }, { threshold: 0.4 });
+    revealIo.observe(vc);
+  }
+
   /* HUD text and brackets are dark-on-tan, so flip each one while it is over a
      band. Checked per element, since the HUD's top and bottom cross at different times. */
   const hudParts = [...document.querySelectorAll(".hud-item, .hud-corner")];
