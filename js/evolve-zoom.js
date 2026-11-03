@@ -122,7 +122,8 @@
     const win = iframe.contentWindow;
     const origin = engine.getBoundingClientRect();
     ctx.clearRect(0, 0, mirror.width, mirror.height);
-    ctx.drawImage(source, 0, 0, mirror.width, mirror.height);
+    /* still 0x0 until the site has sized it, on a slower connection */
+    if (source.width && source.height) ctx.drawImage(source, 0, 0, mirror.width, mirror.height);
 
     /* the site lays a dark scrim over its canvas (desktop only); this copy sits above the
        still that already has it, so fade the canvas by the same amounts to match */
