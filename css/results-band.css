@@ -44,6 +44,17 @@
 }
 .rb-head p { max-width: 60ch; font-size: clamp(1rem, 1.5vw, 1.2rem); color: var(--rb-dim); }
 
+/* the first beat of the sequence: the headline rises in */
+.rb-head { transition: opacity 0.8s ease, transform 0.9s var(--rb-ease); }
+.rb-head.is-armed { opacity: 0; transform: translateY(24px); }
+.rb-head.is-in { opacity: 1; transform: none; }
+
+/* a panel still waiting its turn sits back, so the sequence reads as sections
+   lighting up one at a time rather than a page of half-empty charts */
+.viz :is(.rb-kicker, h3, .viz-note, .rb-legend, .rb-big, .bar-name, .col-name, .ring-center) { transition: opacity 0.6s ease; }
+.viz.is-armed :is(.rb-kicker, h3, .viz-note, .rb-legend, .rb-big, .bar-name, .col-name, .ring-center) { opacity: 0.28; }
+.viz.is-in :is(.rb-kicker, h3, .viz-note, .rb-legend, .rb-big, .bar-name, .col-name, .ring-center) { opacity: 1; }
+
 /* hairline dividers between panels, the same gap technique as .toolkit */
 .rb-grid {
   display: grid;

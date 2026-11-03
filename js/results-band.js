@@ -21,18 +21,43 @@
     grid.appendChild(frag);
   });
 
-  /* charts play once, the first time they are properly on screen */
+  /* The band plays as a sequence, top to bottom: each part waits until it has
+     scrolled up past TRIGGER_LINE, and never starts before the part above it.
+     Panels sharing a row cross the line together, so the gap is what staggers
+     them; stacked on a phone they each simply wait for their own scroll. */
   if (!reduceMotion && "IntersectionObserver" in window) {
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
-      if (!e.isIntersecting) return;
-      e.target.classList.add("is-in");
-      io.unobserve(e.target);
-    }), { threshold: 0.3 });
+    const TRIGGER_LINE = 0.65;   // fraction of the viewport, from the top
+    const GAP_MS = 550;          // between one part starting and the next
+    const parts = [...band.querySelectorAll(".rb-head, .viz")];
+    let reached = -1;            // furthest part that has crossed the line
+    let played = -1;             // furthest part that has started
+    let timer = null;
+
+    const playNext = () => {
+      timer = null;
+      if (played >= reached) return;
+      played += 1;
+      const part = parts[played];
+      part.classList.add("is-in");
+      /* a part already scrolled off the top has no audience, so don't wait on it */
+      const seen = part.getBoundingClientRect().bottom > 0;
+      timer = setTimeout(playNext, seen ? GAP_MS : 0);
+    };
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        reached = Math.max(reached, parts.indexOf(e.target));
+        io.unobserve(e.target);
+      });
+      if (!timer) playNext();
+    }, { rootMargin: `0px 0px -${Math.round((1 - TRIGGER_LINE) * 100)}% 0px` });
+
     band.classList.add("rb-arming");
-    band.querySelectorAll(".viz").forEach((viz) => viz.classList.add("is-armed"));
+    parts.forEach((part) => part.classList.add("is-armed"));
     void band.offsetWidth;   // commit the rewound state before transitions return
     band.classList.remove("rb-arming");
-    band.querySelectorAll(".viz").forEach((viz) => io.observe(viz));
+    parts.forEach((part) => io.observe(part));
   }
 
   /* HUD text and brackets are dark-on-tan, so flip each one while it is over
