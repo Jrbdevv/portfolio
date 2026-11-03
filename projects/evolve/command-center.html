@@ -1,0 +1,1169 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Evolve Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --n950:#040C1E; --n900:#061430; --n800:#0A1D3F; --n700:#0F2A57;
+  --blue:#1F6BFF; --blue-h:#3A80FF; --blue-soft:#EAF1FF; --cyan:#62CCFF; --teal:#39B5E0;
+  --paper:#F5F7FB; --white:#FFFFFF; --ink:#0A1834; --ink-2:#23365C; --muted:#5A6A86; --faint:#8A97AE; --rule:#E1E7F1; --rule-2:#EDF1F7;
+  --good:#0E8A5F; --good-bg:#E6F5EE; --warn:#A8660B; --warn-bg:#FDF2E1; --crit:#C2413A; --crit-bg:#FBEAE9;
+  --mark:#FFF3C4; --mark-ink:#6B4E00;
+  --serif:"Newsreader", "Iowan Old Style", Georgia, serif;
+  --sans:"Manrope", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --side:248px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased}
+button, input, select, textarea{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px; border-radius:4px}
+h1,h2,h3{margin:0; font-weight:500; text-wrap:balance}
+p{margin:0}
+.num{font-variant-numeric:tabular-nums}
+
+/* Layout */
+.app{display:grid; grid-template-columns:var(--side) minmax(0,1fr); min-height:100vh}
+.side{background:var(--n900); color:#DDE6F7; position:sticky; top:env(safe-area-inset-top,0px); height:100vh; display:flex; flex-direction:column; padding:22px 16px; gap:22px; border-right:1px solid rgba(128,170,255,.12)}
+.logo{display:flex; align-items:center; gap:10px; padding:0 8px; color:#fff}
+.logo svg{width:24px; height:22px}
+.logo-word{display:flex; flex-direction:column; line-height:1}
+.logo-word b{font-weight:600; letter-spacing:.26em; font-size:13px}
+.logo-word span{font-size:9px; letter-spacing:.3em; margin-top:5px; color:#8FA6CF; text-transform:uppercase}
+.nav{display:grid; gap:2px}
+.nav-label{font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6F84AB; padding:0 10px 6px}
+.nav button{display:flex; align-items:center; gap:11px; width:100%; padding:9px 10px; border-radius:6px; border:0; background:transparent; color:#C4D1EA; cursor:pointer; font-size:13.5px; font-weight:500; text-align:left}
+.nav button svg{width:17px; height:17px; flex:none; opacity:.85}
+.nav button:hover{background:rgba(255,255,255,.05); color:#fff}
+.nav button.on{background:rgba(31,107,255,.18); color:#fff; box-shadow:inset 2px 0 0 var(--cyan)}
+.nav .badge{margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:10px; background:var(--blue); color:#fff; font-size:11px; font-weight:700; display:grid; place-items:center}
+.engine-card{margin-top:auto; border:1px solid rgba(128,170,255,.2); border-radius:8px; padding:14px; background:rgba(15,42,87,.45)}
+.engine-card .row{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:#fff}
+.pulse{width:8px; height:8px; border-radius:50%; background:#3DD68C; box-shadow:0 0 0 3px rgba(61,214,140,.2)}
+.pulse.run{background:var(--cyan); box-shadow:0 0 0 3px rgba(98,204,255,.25); animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.35}}
+@media (prefers-reduced-motion: reduce){.pulse.run{animation:none}}
+.engine-card dl{margin:10px 0 0; display:grid; grid-template-columns:auto 1fr; gap:4px 10px; font-size:11.5px}
+.engine-card dt{color:#7F93B8}
+.engine-card dd{margin:0; color:#DCE6F8; text-align:right}
+
+.main{min-width:0; display:flex; flex-direction:column}
+.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:20; display:flex; align-items:center; gap:16px; padding:14px 28px; background:rgba(245,247,251,.9); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--rule)}
+.top h1{font-family:var(--serif); font-size:26px; line-height:1.1}
+.top .crumb{font-size:12px; color:var(--muted)}
+.top-right{margin-left:auto; display:flex; align-items:center; gap:10px}
+.seg{display:inline-flex; background:var(--white); border:1px solid var(--rule); border-radius:6px; padding:2px}
+.seg button{border:0; background:transparent; padding:6px 11px; font-size:12.5px; font-weight:600; color:var(--muted); border-radius:4px; cursor:pointer}
+.seg button.on{background:var(--n900); color:#fff}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; height:36px; padding:0 14px; border-radius:6px; font-size:13px; font-weight:600; border:1px solid transparent; cursor:pointer; white-space:nowrap; transition:background .15s, border-color .15s}
+.btn svg{width:15px; height:15px}
+.btn-primary{background:var(--blue); color:#fff}
+.btn-primary:hover{background:var(--blue-h)}
+.btn[disabled]{opacity:.45; cursor:not-allowed}
+.btn-line{background:var(--white); border-color:var(--rule); color:var(--ink-2)}
+.btn-line:hover{border-color:#C6D2E4}
+.btn-ghost{background:transparent; color:var(--muted)}
+.btn-ghost:hover{color:var(--ink)}
+.btn-good{background:var(--good); color:#fff}
+.btn-good:hover{background:#0B7550}
+.btn-sm{height:30px; padding:0 10px; font-size:12px}
+.avatar{width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--cyan)); color:#fff; display:grid; place-items:center; font-weight:700; font-size:12px}
+
+.content{padding:24px 28px 48px; display:grid; gap:20px; align-content:start}
+.sample{display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--ink-2); background:var(--blue-soft); border:1px solid #D3E1FF; border-radius:6px; padding:9px 12px}
+.sample b{font-weight:700; color:var(--blue)}
+
+/* Grid + cards (bootstrap-style 12 col) */
+.row12{display:grid; grid-template-columns:repeat(12, minmax(0,1fr)); gap:20px}
+.c3{grid-column:span 3} .c4{grid-column:span 4} .c5{grid-column:span 5} .c6{grid-column:span 6} .c7{grid-column:span 7} .c8{grid-column:span 8} .c12{grid-column:span 12}
+.card{background:var(--white); border:1px solid var(--rule); border-radius:8px; min-width:0}
+.card-h{display:flex; align-items:center; gap:10px; padding:16px 18px 0}
+.card-h h2{font-size:15px; font-weight:600; font-family:var(--sans)}
+.card-h .sub{font-size:12px; color:var(--muted)}
+.card-h .act{margin-left:auto}
+.card-b{padding:14px 18px 18px}
+
+.kpi{padding:16px 18px}
+.kpi .l{font-size:12px; color:var(--muted); font-weight:600; display:flex; align-items:center; gap:6px}
+.kpi .v{font-size:28px; font-weight:600; letter-spacing:-.01em; margin-top:6px; line-height:1.1}
+.kpi .d{margin-top:8px; font-size:12px; display:flex; align-items:center; gap:6px; color:var(--muted)}
+.delta{display:inline-flex; align-items:center; gap:3px; font-weight:700; padding:1px 6px; border-radius:4px}
+.delta.up{color:var(--good); background:var(--good-bg)}
+.delta.down{color:var(--crit); background:var(--crit-bg)}
+.kpi.attn{border-color:#BBD0FF; background:linear-gradient(180deg,#F5F8FF,#fff)}
+.kpi.attn .v{color:var(--blue)}
+.kpi a, .linkbtn{color:var(--blue); font-weight:600; cursor:pointer; background:none; border:0; padding:0; font-size:12px}
+
+.chart{position:relative; width:100%}
+.chart svg{display:block; width:100%; overflow:visible}
+.chart text{font-family:var(--sans); font-size:11px; fill:var(--faint)}
+.tip{position:absolute; pointer-events:none; background:var(--n900); color:#fff; border-radius:6px; padding:8px 10px; font-size:12px; line-height:1.4; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); opacity:0; transition:opacity .1s; z-index:3; box-shadow:0 8px 24px rgba(6,20,48,.25)}
+.tip b{font-weight:700}
+.tip .k{color:#9FB4D8}
+.tip i{display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:6px}
+.legend{display:flex; gap:14px; font-size:12px; color:var(--ink-2); flex-wrap:wrap}
+.legend i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:-1px}
+
+.hbar{display:grid; gap:12px}
+.hbar-row{display:grid; grid-template-columns:92px minmax(0,1fr) 48px; align-items:center; gap:10px; font-size:13px}
+.hbar-row .t{height:8px; background:var(--rule-2); border-radius:4px; overflow:hidden}
+.hbar-row .t i{display:block; height:100%; background:var(--blue); border-radius:0 4px 4px 0}
+.hbar-row .n{text-align:right; color:var(--ink-2); font-weight:600}
+
+.funnel{display:grid; gap:10px}
+.f-row{display:grid; grid-template-columns:150px minmax(0,1fr) 70px; gap:12px; align-items:center; font-size:13px}
+.f-row .bar{height:26px; border-radius:4px; background:var(--blue); position:relative; min-width:4px}
+.f-row .bar span{position:absolute; left:calc(100% + 8px); top:50%; transform:translateY(-50%); font-size:11.5px; color:var(--muted); white-space:nowrap}
+.f-row .n{text-align:right; font-weight:600}
+.f-row .lbl{color:var(--ink-2)}
+
+table{width:100%; border-collapse:collapse; font-size:13px}
+th{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; text-align:left; padding:0 10px 10px; border-bottom:1px solid var(--rule)}
+td{padding:11px 10px; border-bottom:1px solid var(--rule-2); vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.r, th.r{text-align:right}
+.tbl-wrap{overflow-x:auto}
+
+.rhythm{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px}
+.day{border:1px solid var(--rule); border-radius:6px; padding:10px 4px; text-align:center; min-width:0}
+.day b{display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+.day span{display:block; font-size:12px; font-weight:600; margin-top:3px; overflow:hidden; text-overflow:ellipsis}
+.day.today{background:var(--n900); border-color:var(--n900); color:#fff}
+.day.today b{color:var(--cyan)}
+
+/* Pills & chips */
+.pill{display:inline-flex; align-items:center; gap:5px; height:22px; padding:0 8px; border-radius:11px; font-size:11.5px; font-weight:600; white-space:nowrap}
+.pill svg{width:12px; height:12px}
+.p-blue{background:var(--blue-soft); color:var(--blue)}
+.p-good{background:var(--good-bg); color:var(--good)}
+.p-warn{background:var(--warn-bg); color:var(--warn)}
+.p-crit{background:var(--crit-bg); color:var(--crit)}
+.p-gray{background:var(--rule-2); color:var(--muted)}
+.p-dark{background:var(--n900); color:#fff}
+
+/* Approvals */
+.tabs{display:flex; gap:4px; border-bottom:1px solid var(--rule)}
+.tabs button{border:0; background:none; padding:10px 14px; font-size:13.5px; font-weight:600; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; display:flex; gap:8px; align-items:center}
+.tabs button.on{color:var(--ink); border-color:var(--blue)}
+.tabs .cnt{font-size:11px; background:var(--rule-2); color:var(--ink-2); padding:1px 7px; border-radius:9px}
+.tabs button.on .cnt{background:var(--blue); color:#fff}
+.list{display:grid; gap:12px}
+.topic{display:grid; grid-template-columns:56px minmax(0,1fr) auto; gap:16px; align-items:start; padding:16px 18px; background:var(--white); border:1px solid var(--rule); border-radius:8px; transition:opacity .3s, transform .3s}
+.topic.leaving{opacity:0; transform:translateX(20px)}
+.score{width:56px; height:56px; position:relative; display:grid; place-items:center}
+.score svg{position:absolute; inset:0; transform:rotate(-90deg)}
+.score b{font-size:17px; font-weight:700}
+.score small{position:absolute; bottom:-16px; left:0; right:0; text-align:center; font-size:10px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase}
+.topic h3{font-family:var(--serif); font-size:20px; line-height:1.2}
+.topic .why{margin-top:6px; color:var(--ink-2); font-size:13.5px; max-width:62em}
+.topic .meta{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; align-items:center}
+.topic .src{font-size:12px; color:var(--muted)}
+.t-act{display:flex; flex-direction:column; gap:6px; align-items:stretch; min-width:124px}
+.reject-box{display:none; margin-top:8px; gap:6px; flex-wrap:wrap}
+.topic.rejecting .reject-box{display:flex}
+.reject-box button{font-size:12px; border:1px solid var(--rule); background:var(--white); border-radius:14px; padding:4px 10px; cursor:pointer}
+.reject-box button:hover{border-color:var(--crit); color:var(--crit)}
+.empty{padding:40px 20px; text-align:center; color:var(--muted); background:var(--white); border:1px dashed var(--rule); border-radius:8px}
+
+.draft{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:16px; align-items:center; padding:16px 18px; background:var(--white); border:1px solid var(--rule); border-radius:8px}
+.draft h3{font-family:var(--serif); font-size:19px; line-height:1.2}
+.draft .meta{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; align-items:center; font-size:12px; color:var(--muted)}
+.progress{height:4px; border-radius:2px; background:var(--rule-2); overflow:hidden; width:160px}
+.progress i{display:block; height:100%; background:var(--cyan); animation:grow 3s linear forwards}
+@keyframes grow{from{width:5%} to{width:100%}}
+
+/* Editor drawer */
+.veil{position:fixed; inset:0; background:rgba(4,12,30,.45); z-index:60; opacity:0; pointer-events:none; transition:opacity .2s}
+.veil.on{opacity:1; pointer-events:auto}
+.drawer{position:fixed; z-index:70; top:0; right:0; bottom:0; width:min(760px, 100%); background:var(--white); transform:translateX(100%); transition:transform .28s cubic-bezier(.2,.8,.2,1); display:flex; flex-direction:column; box-shadow:-20px 0 60px rgba(4,12,30,.2)}
+.drawer.on{transform:none}
+.d-head{display:flex; align-items:center; gap:12px; padding:calc(16px + env(safe-area-inset-top,0px)) 22px 16px; border-bottom:1px solid var(--rule)}
+.d-head h2{font-family:var(--serif); font-size:22px}
+.x{margin-left:auto; width:34px; height:34px; border-radius:6px; border:1px solid var(--rule); background:var(--white); cursor:pointer; display:grid; place-items:center}
+.x svg{width:14px; height:14px}
+.d-body{flex:1; overflow:auto; padding:20px 22px; display:grid; gap:18px; align-content:start}
+.d-foot{display:flex; align-items:center; gap:10px; padding:14px 22px calc(14px + env(safe-area-inset-bottom,0px)); border-top:1px solid var(--rule); flex-wrap:wrap}
+.d-foot .note{font-size:12px; color:var(--muted); margin-right:auto}
+.field{display:grid; gap:6px}
+.field label, .flabel{font-size:12px; font-weight:600; color:var(--ink-2)}
+.field .hint{font-size:11.5px; color:var(--muted)}
+.inp{width:100%; border:1px solid var(--rule); border-radius:6px; padding:9px 11px; background:var(--white); font-size:13.5px}
+.inp:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(31,107,255,.12)}
+textarea.inp{resize:vertical; min-height:70px; line-height:1.5}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.three{display:grid; grid-template-columns:2fr 1fr 1fr; gap:14px}
+.body-ed{border:1px solid var(--rule); border-radius:6px; padding:16px 18px; font-family:var(--serif); font-size:17px; line-height:1.6; min-height:260px; color:var(--ink)}
+.body-ed:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(31,107,255,.12)}
+.body-ed h4{font-family:var(--sans); font-size:14px; letter-spacing:.02em; margin:16px 0 4px; font-weight:700}
+.body-ed p{margin:0 0 12px}
+.mk{background:var(--mark); color:var(--mark-ink); border-radius:3px; padding:1px 4px; font-family:var(--sans); font-size:13.5px; font-weight:600; border:1px dashed #E0C35C}
+.marker-bar{display:flex; align-items:center; gap:10px; font-size:12.5px; padding:10px 12px; border-radius:6px; background:var(--warn-bg); color:var(--warn)}
+.marker-bar.done{background:var(--good-bg); color:var(--good)}
+.brief{border:1px solid var(--rule); border-radius:6px; padding:14px 16px; background:var(--paper)}
+.brief ol{margin:8px 0 0; padding-left:18px; display:grid; gap:4px; font-size:13px; color:var(--ink-2)}
+.check{display:flex; gap:10px; align-items:flex-start; font-size:13px; padding:12px; border-radius:6px; background:var(--crit-bg); color:#7A2621}
+.check input{margin-top:3px; accent-color:var(--crit)}
+
+/* Topics (seeds) */
+.how{display:grid; grid-template-columns:repeat(3,1fr); gap:0}
+.how div{padding:16px 18px; border-left:1px solid var(--rule)}
+.how div:first-child{border-left:0}
+.how b{display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--blue)}
+.how p{margin-top:6px; font-size:13px; color:var(--ink-2)}
+.seed-form{display:grid; gap:14px}
+.seed-form .actions{display:flex; justify-content:flex-end; gap:10px}
+.prio{display:flex; gap:6px; flex-wrap:wrap}
+.prio label{display:flex; align-items:center; gap:6px; border:1px solid var(--rule); border-radius:6px; padding:7px 10px; cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2)}
+.prio input{accent-color:var(--blue)}
+.prio label:has(input:checked){border-color:var(--blue); background:var(--blue-soft); color:var(--blue)}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{display:inline-flex; align-items:center; gap:6px; padding:4px 6px 4px 10px; border-radius:14px; background:var(--rule-2); font-size:12.5px; color:var(--ink-2)}
+.chip button{border:0; background:none; cursor:pointer; color:var(--muted); width:18px; height:18px; border-radius:50%; display:grid; place-items:center}
+.chip button:hover{background:#DCE3EE; color:var(--ink)}
+.chip button svg{width:10px; height:10px}
+.slider-row{display:grid; grid-template-columns:minmax(0,1fr) 150px 38px 60px; gap:12px; align-items:center; font-size:13px; padding:8px 0; border-bottom:1px solid var(--rule-2); transition:background .6s}
+.slider-row.fresh{background:var(--blue-soft)}
+.slider-row .nm{display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-width:0}
+.slider-row .nm label{min-width:0; overflow-wrap:anywhere}
+.slider-row .acts{display:flex; justify-content:flex-end; gap:2px}
+.star{width:26px; height:26px; border:0; background:none; border-radius:4px; cursor:pointer; color:#B8C2D3; display:grid; place-items:center}
+.star:hover{background:var(--rule-2); color:var(--muted)}
+.star[aria-pressed="true"]{color:#E0A100}
+.star svg{width:15px; height:15px}
+.theme-add{display:grid; grid-template-columns:minmax(0,1fr) 150px auto; gap:8px; padding-bottom:14px; margin-bottom:6px; border-bottom:1px solid var(--rule)}
+.slider-row:last-child{border-bottom:0}
+.slider-row input{accent-color:var(--blue); width:100%}
+.slider-row .n{text-align:right; font-weight:600; color:var(--ink-2)}
+.icon-btn{border:0; background:none; cursor:pointer; color:var(--muted); padding:4px 6px; border-radius:4px; font-size:12px; font-weight:600}
+.icon-btn:hover{color:var(--ink); background:var(--rule-2)}
+
+
+/* Meetings */
+.mk-kpis{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px}
+.wk-h{display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--rule); flex-wrap:wrap}
+.wk-h h2{font-size:15px; font-weight:600; font-family:var(--sans)}
+.wk-nav{display:flex; gap:4px}
+.wk-nav button{width:32px; height:32px; border-radius:6px; border:1px solid var(--rule); background:var(--white); cursor:pointer; display:grid; place-items:center; color:var(--ink-2)}
+.wk-nav svg{width:14px; height:14px}
+.wk-legend{margin-left:auto; display:flex; gap:12px; font-size:12px; color:var(--muted)}
+.wk-legend i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-2px}
+.wk-legend .lp{background:var(--blue-soft); border:1.5px dashed var(--blue)}
+.wk-legend .lc{background:var(--blue)}
+.wk-legend .ls{background:var(--warn-bg); border:1.5px dashed var(--warn)}
+.wk-scroll{overflow-x:auto}
+.wk{display:grid; grid-template-columns:56px repeat(5, minmax(120px,1fr)); min-width:680px}
+.wk-dh{padding:10px 8px; text-align:center; border-bottom:1px solid var(--rule); border-left:1px solid var(--rule-2)}
+.wk-dh b{display:block; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+.wk-dh span{display:inline-grid; place-items:center; width:30px; height:30px; border-radius:50%; font-size:16px; font-weight:600; margin-top:2px}
+.wk-dh.today span{background:var(--blue); color:#fff}
+.wk-times{position:relative}
+.wk-times div{height:48px; font-size:10.5px; color:var(--faint); text-align:right; padding-right:8px; transform:translateY(-7px)}
+.wk-col{position:relative; border-left:1px solid var(--rule-2); background:repeating-linear-gradient(180deg, transparent 0 47px, var(--rule-2) 47px 48px)}
+.ev{position:absolute; left:4px; right:4px; border-radius:6px; padding:5px 8px; font-size:11.5px; line-height:1.3; text-align:left; cursor:pointer; overflow:hidden; border:0; font-family:inherit}
+.ev b{display:block; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.ev span{display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:.85}
+.ev.pending{background:var(--blue-soft); color:var(--blue); border:1.5px dashed var(--blue)}
+.ev.confirmed{background:var(--blue); color:#fff}
+.ev.suggested{background:var(--warn-bg); color:var(--warn); border:1.5px dashed var(--warn)}
+.ev:hover{filter:brightness(.97)}
+.ev.hl{box-shadow:0 0 0 3px rgba(31,107,255,.35)}
+.now-line{position:absolute; left:0; right:0; height:2px; background:var(--crit); z-index:2}
+.now-line::before{content:""; position:absolute; left:-4px; top:-3px; width:8px; height:8px; border-radius:50%; background:var(--crit)}
+.req-list{display:grid}
+.req{display:grid; grid-template-columns:36px minmax(0,1fr) auto; gap:12px; align-items:start; padding:12px 18px; border-top:1px solid var(--rule-2); cursor:pointer; background:none; border-left:0; border-right:0; border-bottom:0; text-align:left; width:100%; font-family:inherit}
+.req:hover{background:var(--paper)}
+.req.sel{background:var(--blue-soft)}
+.req .av{width:36px; height:36px; border-radius:50%; background:var(--n700); color:#fff; display:grid; place-items:center; font-size:12px; font-weight:700}
+.req b{display:block; font-size:13.5px; font-weight:600}
+.req .co{font-size:12.5px; color:var(--muted)}
+.req .when{font-size:12px; color:var(--ink-2); margin-top:4px}
+.req .new{width:8px; height:8px; border-radius:50%; background:var(--blue); display:inline-block; margin-left:6px; vertical-align:1px}
+.mfilter{display:flex; gap:4px; padding:12px 18px 10px; flex-wrap:wrap}
+.mfilter button{border:1px solid var(--rule); background:var(--white); border-radius:14px; padding:4px 10px; font-size:12px; font-weight:600; color:var(--muted); cursor:pointer}
+.mfilter button.on{background:var(--n900); border-color:var(--n900); color:#fff}
+.m-when{display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:center; padding:16px; border-radius:8px; background:var(--paper); border:1px solid var(--rule)}
+.m-cal{width:56px; border-radius:8px; overflow:hidden; text-align:center; background:var(--white); border:1px solid var(--rule)}
+.m-cal b{display:block; background:var(--blue); color:#fff; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; padding:3px 0}
+.m-cal span{display:block; font-size:22px; font-weight:700; padding:4px 0}
+.m-when h3{font-family:var(--sans); font-size:16px; font-weight:600}
+.m-when p{font-size:13px; color:var(--muted); margin-top:2px}
+.dl{display:grid; grid-template-columns:140px minmax(0,1fr); gap:10px 16px; font-size:13.5px; margin:0}
+.dl dt{color:var(--muted)}
+.dl dd{margin:0; font-weight:600; overflow-wrap:anywhere}
+.quote{border-left:3px solid var(--blue); padding:10px 14px; background:var(--paper); border-radius:0 6px 6px 0; font-size:14px; color:var(--ink-2); line-height:1.6}
+.sec-t{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:8px}
+.alt{display:none; gap:8px; align-items:end; flex-wrap:wrap; padding:14px; border:1px solid var(--rule); border-radius:8px}
+.alt.on{display:flex}
+.alt .field{flex:1; min-width:160px}
+@media (max-width: 860px){
+  .mk-kpis{grid-template-columns:1fr}
+  .dl{grid-template-columns:1fr; gap:2px}
+  .dl dd{margin-bottom:8px}
+}
+
+/* Products */
+.prod{display:grid; grid-template-columns:64px minmax(0,1.6fr) repeat(3, minmax(0,.8fr)) auto; gap:16px; align-items:center; padding:16px 18px; background:var(--white); border:1px solid var(--rule); border-radius:8px}
+.p-ico{width:64px; height:64px; border-radius:6px; background:linear-gradient(150deg,#0F2A57,#061430); display:grid; place-items:center; color:var(--cyan); font-size:10px; font-weight:700; letter-spacing:.08em}
+.p-ico svg{width:26px; height:26px}
+.prod h3{font-family:var(--serif); font-size:19px; line-height:1.2}
+.prod .desc{font-size:12.5px; color:var(--muted); margin-top:4px}
+.stat .k{font-size:11px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; font-weight:600}
+.stat .v{font-size:17px; font-weight:600; margin-top:2px}
+.switch{position:relative; width:36px; height:20px; flex:none}
+.switch input{position:absolute; inset:0; opacity:0; cursor:pointer; margin:0}
+.switch span{position:absolute; inset:0; background:#CBD5E4; border-radius:10px; transition:background .2s; pointer-events:none}
+.switch span::after{content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; background:#fff; border-radius:50%; transition:transform .2s; box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch input:checked + span{background:var(--good)}
+.switch input:checked + span::after{transform:translateX(16px)}
+.status-cell{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600}
+
+.toast{position:fixed; z-index:90; left:50%; bottom:calc(24px + env(safe-area-inset-bottom,0px)); transform:translate(-50%,16px); background:var(--n900); color:#fff; padding:10px 16px; border-radius:6px; font-size:13px; opacity:0; transition:opacity .2s, transform .2s; pointer-events:none; max-width:calc(100% - 32px)}
+.toast.on{opacity:1; transform:translate(-50%,0)}
+
+[data-view]{display:none}
+[data-view].on{display:grid}
+
+@media (max-width: 1180px){
+  .c3{grid-column:span 6} .c4, .c5, .c7, .c8{grid-column:span 12} .c6{grid-column:span 12}
+  .prod{grid-template-columns:56px minmax(0,1fr) auto; }
+  .prod .stat{display:none}
+}
+@media (max-width: 860px){
+  .app{grid-template-columns:1fr}
+  .side{position:sticky; top:env(safe-area-inset-top,0px); z-index:30; height:auto; flex-direction:row; align-items:center; padding:10px 16px; gap:12px; overflow-x:auto}
+  .side .nav-label, .engine-card, .logo-word span{display:none}
+  .nav{display:flex; gap:4px}
+  .nav button{white-space:nowrap; padding:8px 10px}
+  .nav button.on{box-shadow:inset 0 -2px 0 var(--cyan)}
+  .top{position:static; flex-wrap:wrap; padding:14px 16px}
+  .top-right{margin-left:0; width:100%; flex-wrap:wrap}
+  .content{padding:16px 16px 40px}
+  .c3{grid-column:span 6}
+  .kpi .v{font-size:22px}
+  .top .avatar{display:none}
+  .row12{gap:12px}
+  .topic{grid-template-columns:48px minmax(0,1fr)}
+  .t-act{grid-column:1 / -1; flex-direction:row; flex-wrap:wrap}
+  .draft{grid-template-columns:1fr}
+  .how{grid-template-columns:1fr}
+  .how div{border-left:0; border-top:1px solid var(--rule)}
+  .how div:first-child{border-top:0}
+  .two, .three{grid-template-columns:1fr}
+  .f-row{grid-template-columns:110px minmax(0,1fr) 54px}
+  .slider-row{grid-template-columns:minmax(0,1fr) 96px 34px 56px; gap:8px}
+  .theme-add{grid-template-columns:1fr 1fr}
+  .theme-add .btn{grid-column:1 / -1}
+  .rhythm{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .day{padding:8px 4px}
+  .day span{font-size:11.5px}
+}
+</style>
+
+<div class="app">
+  <aside class="side">
+    <div class="logo">
+      <svg viewBox="0 0 26 24" aria-hidden="true"><path d="M5 0h21l-2 5H3z M3.2 9.5h17l-2 5H1.2z M1.9 19h21.1l-2 5H0z" fill="currentColor"/></svg>
+      <span class="logo-word"><b>EVOLVE</b><span>Command center</span></span>
+    </div>
+    <nav class="nav" aria-label="Dashboard">
+      <div class="nav-label">Workspace</div>
+      <button class="on" data-go="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Overview</button>
+      <button data-go="approvals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12.5l5 5L20 6.5"/></svg>Approvals<span class="badge" id="navBadge">0</span></button>
+      <button data-go="meetings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Meetings<span class="badge" id="navMeet">0</span></button>
+      <button data-go="topics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></svg>Steer the engine</button>
+      <button data-go="products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg>Products</button>
+    </nav>
+    <div class="engine-card" aria-live="polite">
+      <div class="row"><span class="pulse" id="enginePulse"></span><span id="engineState">Neural engine online</span></div>
+      <dl>
+        <dt>Last run</dt><dd id="lastRun">Today, 6:02 AM</dd>
+        <dt>Next run</dt><dd>Wed, 6:00 AM</dd>
+        <dt>Sources</dt><dd>20 monitored</dd>
+        <dt>Your topics</dt><dd id="seedCountSide">0 active</dd>
+      </dl>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <div>
+        <div class="crumb">Good morning, Ahsan · Tuesday is <b>Create</b> day</div>
+        <h1 id="viewTitle">Overview</h1>
+      </div>
+      <div class="top-right">
+        <div class="seg" role="group" aria-label="Date range" id="rangeSeg">
+          <button data-r="7">7D</button><button data-r="30" class="on">30D</button><button data-r="90">90D</button>
+        </div>
+        <button class="btn btn-primary" id="runBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>Run research now</button>
+        <span class="avatar" aria-label="Ahsan Shah">AS</span>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="sample"><b>Sample data</b> This prototype shows example numbers. At build it connects to site analytics, Stripe and the neural engine.</div>
+
+      <!-- OVERVIEW -->
+      <section data-view="overview" class="on" style="gap:20px">
+        <div class="row12">
+          <div class="card kpi c3"><div class="l">Site visitors</div><div class="v num" id="kVis">0</div><div class="d"><span class="delta up" id="kVisD">+0%</span> vs previous period</div></div>
+          <div class="card kpi c3"><div class="l">Revenue</div><div class="v num" id="kRev">$0</div><div class="d"><span class="delta up" id="kRevD">+0%</span> vs previous period</div></div>
+          <div class="card kpi c3"><div class="l">Free kit sign-ups</div><div class="v num" id="kSign">0</div><div class="d"><span class="num" id="kSignR">0%</span> of visitors</div></div>
+          <div class="card kpi attn c3"><div class="l">Waiting on you</div><div class="v num" id="kWait">0</div><div class="d"><span id="kWaitD">0 topics · 0 drafts</span> <button class="linkbtn" data-go="approvals">Review</button></div></div>
+        </div>
+
+        <div class="row12">
+          <div class="card c8">
+            <div class="card-h"><h2>Site visitors</h2><span class="sub" id="visSub">Daily, last 30 days</span></div>
+            <div class="card-b"><div class="chart" id="visChart"></div></div>
+          </div>
+          <div class="card c4">
+            <div class="card-h"><h2>Where visitors come from</h2></div>
+            <div class="card-b"><div class="hbar" id="sources"></div></div>
+          </div>
+        </div>
+
+        <div class="row12">
+          <div class="card c7">
+            <div class="card-h"><h2>Revenue by product</h2><span class="act legend"><span><i style="background:#1F6BFF"></i>Program $169</span><span><i style="background:#39B5E0"></i>Intelligence $49/mo</span></span></div>
+            <div class="card-b"><div class="chart" id="revChart"></div></div>
+          </div>
+          <div class="card c5">
+            <div class="card-h"><h2>Content-to-revenue funnel</h2></div>
+            <div class="card-b"><div class="funnel" id="funnel"></div></div>
+          </div>
+        </div>
+
+        <div class="row12">
+          <div class="card c8">
+            <div class="card-h"><h2>Top posts</h2><span class="sub">Published through the engine</span></div>
+            <div class="card-b tbl-wrap">
+              <table><thead><tr><th>Post</th><th class="r">Views</th><th class="r">Avg. read</th><th class="r">Kit sign-ups</th></tr></thead><tbody id="topPosts"></tbody></table>
+            </div>
+          </div>
+          <div class="card c4">
+            <div class="card-h"><h2>This week</h2></div>
+            <div class="card-b" style="display:grid; gap:14px">
+              <div class="rhythm" id="rhythm"></div>
+              <p style="font-size:13px; color:var(--ink-2)" id="rhythmNote"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- APPROVALS -->
+      <section data-view="approvals" style="gap:16px">
+        <div class="tabs" role="tablist">
+          <button class="on" data-tab="topics" role="tab">Topics from the engine <span class="cnt" id="tCnt">0</span></button>
+          <button data-tab="drafts" role="tab">Drafts to publish <span class="cnt" id="dCnt">0</span></button>
+        </div>
+        <div id="tabTopics" class="list"></div>
+        <div id="tabDrafts" class="list" hidden></div>
+      </section>
+
+      <!-- TOPICS / STEER -->
+      <section data-view="topics" style="gap:20px">
+        <div class="card"><div class="how">
+          <div><b>1 · You add a topic</b><p>A theme, company, person or link you want covered, plus your angle on it.</p></div>
+          <div><b>2 · The engine searches for it</b><p>Your topics are added to every research run and matching stories score higher.</p></div>
+          <div><b>3 · You approve what fits</b><p>Matches show up in Approvals tagged with the topic that found them.</p></div>
+        </div></div>
+
+        <div class="row12">
+          <div class="card c5">
+            <div class="card-h"><h2>Add a topic</h2></div>
+            <div class="card-b">
+              <form class="seed-form" id="seedForm">
+                <div class="field"><label for="sTopic">Topic, company or link</label><input class="inp" id="sTopic" placeholder="e.g. Hyperscaler co-sell programs" required></div>
+                <div class="two">
+                  <div class="field"><label for="sType">Type</label><select class="inp" id="sType"><option>Theme</option><option>Company</option><option>Person</option><option>Link</option></select></div>
+                  <div class="field"><label for="sExp">Keep active</label><select class="inp" id="sExp"><option>Until I remove it</option><option>30 days</option><option>This week</option></select></div>
+                </div>
+                <div class="field"><span class="flabel">Priority</span>
+                  <div class="prio">
+                    <label><input type="radio" name="prio" value="Always cover"> Always cover</label>
+                    <label><input type="radio" name="prio" value="Boost" checked> Boost</label>
+                    <label><input type="radio" name="prio" value="Watch"> Watch</label>
+                  </div>
+                  <span class="hint">Always cover: every match reaches you. Boost: matches rank higher. Watch: only strong matches.</span>
+                </div>
+                <div class="field"><label for="sAngle">Your angle (optional)</label><textarea class="inp" id="sAngle" placeholder="What you want to say about it. The engine uses this to write the brief."></textarea></div>
+                <div class="actions"><button class="btn btn-primary" type="submit">Add to engine</button></div>
+              </form>
+            </div>
+          </div>
+          <div class="card c7">
+            <div class="card-h"><h2>Your topics</h2><span class="sub" id="seedSub">0 active</span></div>
+            <div class="card-b tbl-wrap">
+              <table><thead><tr><th>Topic</th><th>Priority</th><th class="r">Matches this week</th><th class="r"></th></tr></thead><tbody id="seedRows"></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <div class="row12">
+          <div class="card c7">
+            <div class="card-h"><h2>Theme mix</h2><span class="sub">How much of each research run goes to each theme</span></div>
+            <div class="card-b">
+              <form class="theme-add" id="themeForm">
+                <label for="themeInp" hidden>New theme</label><input class="inp" id="themeInp" placeholder="Add a theme, e.g. Sovereign AI" maxlength="60">
+                <label for="themePrio" hidden>Priority</label><select class="inp" id="themePrio"><option value="35">High priority</option><option value="20" selected>Standard</option><option value="10">Light</option></select>
+                <button class="btn btn-primary" type="submit">Add theme</button>
+              </form>
+              <div id="themes"></div>
+            </div>
+          </div>
+          <div class="card c5">
+            <div class="card-h"><h2>Never suggest</h2></div>
+            <div class="card-b" style="display:grid; gap:12px">
+              <p style="font-size:13px; color:var(--ink-2)">Topics, people or sources the engine should skip.</p>
+              <form id="avoidForm" style="display:flex; gap:8px"><label class="sr" for="avoidInp" hidden>Add</label><input class="inp" id="avoidInp" placeholder="e.g. Crypto price moves"><button class="btn btn-line" type="submit">Add</button></form>
+              <div class="chips" id="avoidChips"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MEETINGS -->
+      <section data-view="meetings" style="gap:20px">
+        <div class="mk-kpis">
+          <div class="card kpi attn"><div class="l">Waiting for your reply</div><div class="v num" id="mPend">0</div><div class="d">Requests nobody has answered yet</div></div>
+          <div class="card kpi"><div class="l">Confirmed, next 2 weeks</div><div class="v num" id="mConf">0</div><div class="d" id="mConfD">Meetings on your calendar</div></div>
+          <div class="card kpi"><div class="l">Requests this month</div><div class="v num" id="mMonth">0</div><div class="d">From the Book a meeting page</div></div>
+        </div>
+        <div class="row12">
+          <div class="card c8">
+            <div class="wk-h">
+              <div class="wk-nav"><button type="button" id="wkPrev" aria-label="Previous week"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" id="wkNext" aria-label="Next week"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3l5 5-5 5"/></svg></button></div>
+              <button type="button" class="btn btn-line btn-sm" id="wkToday">This week</button>
+              <h2 id="wkLabel">Week</h2>
+              <div class="wk-legend"><span><i class="lp"></i>Requested</span><span><i class="lc"></i>Confirmed</span><span><i class="ls"></i>New time proposed</span></div>
+            </div>
+            <div class="wk-scroll"><div class="wk" id="wk"></div></div>
+          </div>
+          <div class="card c4">
+            <div class="card-h"><h2>Requests</h2><span class="sub">Central Time</span></div>
+            <div class="mfilter" role="group" aria-label="Filter requests">
+              <button class="on" data-mf="pending">Needs reply</button><button data-mf="confirmed">Confirmed</button><button data-mf="all">All</button>
+            </div>
+            <div class="req-list" id="reqList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section data-view="products" style="gap:14px">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+          <p style="color:var(--ink-2)">Edit what's for sale on the site. Changes go live when you save.</p>
+          <button class="btn btn-line" id="addProd" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New product</button>
+        </div>
+        <div class="list" id="prodList"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- Drawer (draft editor / product editor) -->
+<div class="veil" id="veil"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="d-head"><h2 id="dTitle">Edit</h2><span id="dPill"></span><button class="x" id="dClose" aria-label="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3l10 10M13 3L3 13"/></svg></button></div>
+  <div class="d-body" id="dBody"></div>
+  <div class="d-foot" id="dFoot"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+  const fmt = n => Math.round(n).toLocaleString('en-US');
+  const money = n => '$' + Math.round(n).toLocaleString('en-US');
+  let tt; const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2600); };
+  const ICON = {
+    x:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l8 8M12 4l-8 8"/></svg>',
+    flag:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 14V2.5M3 3h8l-1.5 3L11 9H3"/></svg>',
+    seed:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="2"/><circle cx="8" cy="8" r="5.5"/></svg>'
+  };
+
+  /* ---------------- Navigation ---------------- */
+  const TITLES = { overview:'Overview', approvals:'Approvals', meetings:'Meeting requests', topics:'Steer the engine', products:'Products' };
+  function go(v){
+    $$('[data-view]').forEach(s => s.classList.toggle('on', s.dataset.view === v));
+    $$('.nav button').forEach(b => b.classList.toggle('on', b.dataset.go === v));
+    $('#viewTitle').textContent = TITLES[v];
+    $('#rangeSeg').style.visibility = v === 'overview' ? 'visible' : 'hidden';
+    if (v === 'overview') drawCharts();
+    scrollTo({ top:0 });
+  }
+  document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go); });
+
+  /* ---------------- Sample analytics ---------------- */
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const TODAY = new Date(2026, 8, 29);
+  const DAYS = [];
+  for (let i = 179; i >= 0; i--){
+    const d = new Date(TODAY); d.setDate(d.getDate() - i);
+    const dow = d.getDay(); const trend = 250 + (179 - i) * 1.35;
+    const wk = [0.62, 0.95, 1.05, 1.32, 1.12, 0.98, 0.7][dow]; // Wed publish spike
+    const v = trend * wk * (0.88 + rnd() * 0.24);
+    const tk = rnd() < 0.62 + (179 - i) / 600 ? Math.round(rnd() * 2.3) : 0;
+    const pb = rnd() < 0.34 + (179 - i) / 700 ? Math.round(rnd() * 1.4) : 0;
+    DAYS.push({ d, v: Math.round(v), tk, pb });
+  }
+  let range = 30;
+  const sum = (a, f) => a.reduce((s, x) => s + f(x), 0);
+  function slice(n, off = 0){ return DAYS.slice(DAYS.length - n - off, DAYS.length - off); }
+  const pct = (a, b) => b ? (a - b) / b * 100 : 0;
+  function setDelta(el, p){ el.textContent = (p >= 0 ? '+' : '') + p.toFixed(0) + '%'; el.className = 'delta ' + (p >= 0 ? 'up' : 'down'); }
+  const SOURCES = [['LinkedIn', .46], ['Google', .21], ['Direct', .14], ['YouTube', .11], ['Substack', .08]];
+  const POSTS = [
+    ['Why partner programs stall after the first 90 days', 3120, '4:12', 96],
+    ['The AI co-sell playbook for mid-market vendors', 2480, '5:05', 81],
+    ['What operators get wrong about alliance KPIs', 1935, '3:48', 52],
+    ['Five signals an ecosystem is ready for AI agents', 1610, '4:31', 47]
+  ];
+
+  function renderOverview(){
+    const cur = slice(range), prev = slice(range, range);
+    const vis = sum(cur, x => x.v), pvis = sum(prev, x => x.v);
+    const rev = sum(cur, x => x.tk * 49 + x.pb * 169), prev_rev = sum(prev, x => x.tk * 49 + x.pb * 169);
+    const signups = Math.round(vis * 0.031);
+    $('#kVis').textContent = fmt(vis); setDelta($('#kVisD'), pct(vis, pvis));
+    $('#kRev').textContent = money(rev); setDelta($('#kRevD'), pct(rev, prev_rev));
+    $('#kSign').textContent = fmt(signups); $('#kSignR').textContent = (signups / vis * 100).toFixed(1) + '%';
+    $('#visSub').textContent = `Daily, last ${range} days`;
+    $('#sources').innerHTML = SOURCES.map(([n, s]) => `<div class="hbar-row"><span>${n}</span><span class="t"><i style="width:${s / .46 * 100}%"></i></span><span class="n num">${Math.round(s * 100)}%</span></div>`).join('');
+    const tkU = sum(cur, x => x.tk), pbU = sum(cur, x => x.pb);
+    const F = [['Site visitors', vis], ['Free kit sign-ups', signups], ['AI Deal Intelligence ($49/mo)', tkU], ['How Enterprises Buy ($169)', pbU], ['1:1 sessions requested', Math.max(1, Math.round(pbU * .45))]];
+    $('#funnel').innerHTML = F.map(([n, v], i) => {
+      const w = i === 0 ? 100 : Math.max(2, Math.sqrt(v / vis) * 100);
+      const conv = i ? `${(v / F[i - 1][1] * 100).toFixed(1)}% of prior step` : '';
+      return `<div class="f-row"><span class="lbl">${n}</span><span><span class="bar" style="width:${Math.min(80, w)}%; opacity:${1 - i * .13}"><span>${conv}</span></span></span><span class="n num">${fmt(v)}</span></div>`;
+    }).join('');
+    const scale = range / 30;
+    $('#topPosts').innerHTML = POSTS.map(([t, v, r, s]) => `<tr><td>${esc(t)}</td><td class="r num">${fmt(v * scale)}</td><td class="r num">${r}</td><td class="r num">${fmt(s * scale)}</td></tr>`).join('');
+    drawCharts();
+  }
+
+  /* ---------------- Charts ---------------- */
+  function nice(max){ const p = Math.pow(10, Math.floor(Math.log10(max))); const m = max / p; const s = m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10; return s * p; }
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dlabel = d => `${MON[d.getMonth()]} ${d.getDate()}`;
+
+  function lineChart(el, pts){
+    const W = el.clientWidth || 600, H = 250, L = 44, Rr = 12, T = 12, B = 28;
+    const max = nice(Math.max(...pts.map(p => p.v)) * 1.1);
+    const x = i => L + (W - L - Rr) * (pts.length === 1 ? .5 : i / (pts.length - 1));
+    const y = v => T + (H - T - B) * (1 - v / max);
+    const ticks = [0, .25, .5, .75, 1].map(f => f * max);
+    const line = pts.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.v).toFixed(1)}`).join('');
+    const area = `${line}L${x(pts.length - 1)},${y(0)}L${x(0)},${y(0)}Z`;
+    const every = Math.ceil(pts.length / 6);
+    const last = pts[pts.length - 1];
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Daily site visitors">
+      <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1F6BFF" stop-opacity=".18"/><stop offset="1" stop-color="#1F6BFF" stop-opacity="0"/></linearGradient></defs>
+      ${ticks.map(t => `<line x1="${L}" x2="${W - Rr}" y1="${y(t)}" y2="${y(t)}" stroke="#EDF1F7"/><text x="${L - 8}" y="${y(t) + 4}" text-anchor="end">${fmt(t)}</text>`).join('')}
+      ${pts.map((p, i) => i % every === 0 ? `<text x="${x(i)}" y="${H - 8}" text-anchor="middle">${dlabel(p.d)}</text>` : '').join('')}
+      <path d="${area}" fill="url(#ag)"/>
+      <path d="${line}" fill="none" stroke="#1F6BFF" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="${x(pts.length - 1)}" cy="${y(last.v)}" r="4.5" fill="#1F6BFF" stroke="#fff" stroke-width="2"/>
+      <line id="xh" x1="0" x2="0" y1="${T}" y2="${H - B}" stroke="#8A97AE" stroke-dasharray="3 3" opacity="0"/>
+      <circle id="xd" r="5" fill="#1F6BFF" stroke="#fff" stroke-width="2" opacity="0"/>
+      <rect x="${L}" y="${T}" width="${W - L - Rr}" height="${H - T - B}" fill="transparent" id="hit"/>
+    </svg><div class="tip"></div>`;
+    const tip = el.querySelector('.tip'), xh = el.querySelector('#xh'), xd = el.querySelector('#xd');
+    const move = ev => {
+      const r = el.getBoundingClientRect(); const mx = (ev.clientX - r.left) * (W / r.width);
+      const i = Math.max(0, Math.min(pts.length - 1, Math.round((mx - L) / (W - L - Rr) * (pts.length - 1))));
+      const p = pts[i];
+      xh.setAttribute('x1', x(i)); xh.setAttribute('x2', x(i)); xh.setAttribute('opacity', 1);
+      xd.setAttribute('cx', x(i)); xd.setAttribute('cy', y(p.v)); xd.setAttribute('opacity', 1);
+      tip.innerHTML = `<span class="k">${p.d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })}</span><br><b>${fmt(p.v)}</b> visitors`;
+      tip.style.left = (x(i) / W * r.width) + 'px'; tip.style.top = (y(p.v) / H * r.height) + 'px'; tip.style.opacity = 1;
+    };
+    const hit = el.querySelector('#hit');
+    hit.addEventListener('pointermove', move);
+    hit.addEventListener('pointerleave', () => { tip.style.opacity = 0; xh.setAttribute('opacity', 0); xd.setAttribute('opacity', 0); });
+  }
+
+  function barChart(el, groups){
+    const W = el.clientWidth || 500, H = 230, L = 50, Rr = 8, T = 12, B = 28;
+    const max = nice(Math.max(1, ...groups.map(g => g.pb + g.tk)) * 1.1);
+    const n = groups.length, slot = (W - L - Rr) / n, bw = Math.min(34, slot * .6);
+    const y = v => T + (H - T - B) * (1 - v / max);
+    const ticks = [0, .5, 1].map(f => f * max);
+    const every = Math.ceil(n / 7);
+    let bars = '';
+    groups.forEach((g, i) => {
+      const cx = L + slot * i + slot / 2, x0 = cx - bw / 2;
+      const hp = y(0) - y(g.pb), ht = y(0) - y(g.tk);
+      // program at base, membership above with 2px gap; rounded top on the top segment
+      if (g.pb > 0) bars += `<rect x="${x0}" y="${y(g.pb)}" width="${bw}" height="${hp}" fill="#1F6BFF" rx="${g.tk ? 0 : 3}"/>`;
+      if (g.tk > 0) bars += `<rect x="${x0}" y="${y(g.pb + g.tk)}" width="${bw}" height="${Math.max(0, ht - (g.pb ? 2 : 0))}" fill="#39B5E0" rx="3"/>`;
+      bars += `<rect class="bh" data-i="${i}" x="${L + slot * i}" y="${T}" width="${slot}" height="${H - T - B}" fill="transparent"/>`;
+      if (i % every === 0) bars += `<text x="${cx}" y="${H - 8}" text-anchor="middle">${g.label}</text>`;
+    });
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Revenue by product">
+      ${ticks.map(t => `<line x1="${L}" x2="${W - Rr}" y1="${y(t)}" y2="${y(t)}" stroke="#EDF1F7"/><text x="${L - 8}" y="${y(t) + 4}" text-anchor="end">${money(t)}</text>`).join('')}
+      ${bars}</svg><div class="tip"></div>`;
+    const tip = el.querySelector('.tip');
+    el.querySelectorAll('.bh').forEach(h => {
+      h.addEventListener('pointerenter', () => {
+        const g = groups[+h.dataset.i], r = el.getBoundingClientRect();
+        tip.innerHTML = `<span class="k">${g.full}</span><br><i style="background:#1F6BFF"></i>Program <b>${money(g.pb)}</b><br><i style="background:#39B5E0"></i>Intelligence <b>${money(g.tk)}</b>`;
+        const cx = L + slot * (+h.dataset.i) + slot / 2;
+        tip.style.left = (cx / W * r.width) + 'px'; tip.style.top = (y(g.pb + g.tk) / H * r.height) + 'px'; tip.style.opacity = 1;
+      });
+      h.addEventListener('pointerleave', () => tip.style.opacity = 0);
+    });
+  }
+
+  function drawCharts(){
+    if (!$('[data-view="overview"]').classList.contains('on')) return;
+    const cur = slice(range);
+    lineChart($('#visChart'), cur);
+    let groups;
+    if (range === 7) groups = cur.map(x => ({ label: x.d.toLocaleDateString('en-US', { weekday:'short' }), full: dlabel(x.d), tk: x.tk * 49, pb: x.pb * 169 }));
+    else {
+      groups = [];
+      for (let i = 0; i < cur.length; i += 7){
+        const w = cur.slice(i, i + 7);
+        groups.push({ label: dlabel(w[0].d), full: `Week of ${dlabel(w[0].d)}`, tk: sum(w, x => x.tk) * 49, pb: sum(w, x => x.pb) * 169 });
+      }
+    }
+    barChart($('#revChart'), groups);
+  }
+  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(drawCharts, 120); });
+  $('#rangeSeg').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    range = +b.dataset.r; $$('#rangeSeg button').forEach(x => x.classList.toggle('on', x === b)); renderOverview();
+  });
+
+  // Weekly rhythm
+  const RH = [['Mon','Insights'],['Tue','Create'],['Wed','Publish'],['Thu','Engage'],['Fri','Analyze']];
+  const todayIdx = TODAY.getDay() - 1;
+  $('#rhythm').innerHTML = RH.map(([d, t], i) => `<div class="day${i === todayIdx ? ' today' : ''}"><b>${d}</b><span>${t}</span></div>`).join('');
+
+  /* ---------------- Engine: topics + drafts ---------------- */
+  const THEMES = ['Partner ecosystems', 'AI adoption', 'Enterprise tech', 'Policy & regulation', 'Deals & earnings', 'Research & data'];
+  let topics = [
+    { id:1, score:94, theme:'Partner ecosystems', title:'Cloud marketplaces are becoming the default channel for enterprise AI deals', why:'Several large vendors now route AI purchases through cloud marketplaces. Partner leaders need a view on co-sell economics and who owns the customer.', src:'5 sources · analyst report, earnings calls, vendor announcements', seed:'Hyperscaler co-sell programs' },
+    { id:2, score:88, theme:'AI adoption', title:'Mid-market buyers are moving from AI pilots to production budgets', why:'New survey data shows more companies funding AI in production rather than pilots. Good fit for your "discipline today" angle on execution.', src:'3 sources · industry survey, research note' },
+    { id:3, score:81, theme:'Policy & regulation', political:true, title:'New state-level AI rules add disclosure requirements for B2B software', why:'Vendors selling into several states may need new disclosures. Relevant for partners who resell or embed AI features.', src:'4 sources · legislative text, legal analysis, trade press' },
+    { id:4, score:76, theme:'Deals & earnings', title:'Services firms are buying AI boutiques to fill delivery gaps', why:'A run of small acquisitions suggests services partners are buying capability instead of building it. Strong angle for PE and family office readers.', src:'4 sources · deal announcements, earnings commentary', seed:'Partner-led M&A' },
+    { id:5, score:69, theme:'Research & data', title:'Partner-sourced revenue share is rising in enterprise software', why:'Benchmarks point to a larger share of revenue coming through partners. Could anchor a data-led LinkedIn post.', src:'2 sources · benchmark report, vendor filings' }
+  ];
+  const NEW_TOPICS = [
+    { score:90, theme:'Enterprise tech', title:'Enterprise buyers are asking vendors for agent-ready APIs', why:'Procurement teams are adding agent compatibility to RFPs. Useful for partners planning integrations next year.', src:'3 sources · RFP analysis, analyst commentary' },
+    { score:73, theme:'Partner ecosystems', title:'Alliance teams are being measured on sourced pipeline, not influence', why:'More companies are tying alliance comp to sourced pipeline. Fits your framework on alliance KPIs.', src:'2 sources · compensation survey, operator interviews', seed:'Alliance KPIs' }
+  ];
+  const DRAFT_BODY = t => `<h4>The short version</h4><p>${esc(t.why)}</p><p><span class="mk" contenteditable="false" data-mk>[AHSAN: add a story from your VMware or OneTrust days that shows this pattern]</span></p><h4>What it means for partner leaders</h4><p>The companies that win here treat partners as a route to market, not a side channel. That means shared pipeline, clear rules of engagement and incentives both sides can see.</p><p><span class="mk" contenteditable="false" data-mk>[AHSAN: your point of view — is this a real shift or a short-term trend?]</span></p><h4>What to do this quarter</h4><p>Audit which partners actually source deals. Cut the ones who don't. Put the savings into the two or three who do.</p><p><span class="mk" contenteditable="false" data-mk>[AHSAN: one framework from How Enterprises Actually Buy to link here]</span></p>`;
+  let drafts = [
+    { id:101, title:'Why partner programs stall after the first 90 days, and how to restart them', theme:'Partner ecosystems', status:'ready', words:1180, meta:'Most partner programs lose momentum after launch. Here is how to spot the stall early and restart it.', why:'Most programs stall because nobody owns activation after signing. Partners get a portal login and a logo, then silence.', political:false, markers:3 },
+    { id:102, title:'The AI rules every B2B vendor should read before 2027', theme:'Policy & regulation', status:'ready', words:960, meta:'A plain-language guide to the AI rules that matter for B2B software vendors and their partners.', why:'New AI rules at the state level change what B2B vendors have to disclose, and partners who resell share some of that risk.', political:true, markers:3 }
+  ];
+  let nextId = 200;
+
+  function scoreRing(s){
+    const r = 24, c = 2 * Math.PI * r, col = s >= 85 ? '#1F6BFF' : s >= 75 ? '#39B5E0' : '#8A97AE';
+    return `<div class="score" title="Engine score out of 100"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="${r}" fill="none" stroke="#EDF1F7" stroke-width="4"/><circle cx="28" cy="28" r="${r}" fill="none" stroke="${col}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${c * s / 100} ${c}"/></svg><b class="num">${s}</b><small>score</small></div>`;
+  }
+  function renderTopics(){
+    const box = $('#tabTopics');
+    if (!topics.length) { box.innerHTML = '<div class="empty">You\'re caught up. The next research run is Wednesday at 6:00 AM, or run one now.</div>'; }
+    else box.innerHTML = topics.sort((a, b) => b.score - a.score).map(t => `
+      <article class="topic" data-id="${t.id}">
+        ${scoreRing(t.score)}
+        <div>
+          <h3>${esc(t.title)}</h3>
+          <p class="why">${esc(t.why)}</p>
+          <div class="meta">
+            <span class="pill p-gray">${esc(t.theme)}</span>
+            ${t.seed ? `<span class="pill p-blue">${ICON.seed}Your topic: ${esc(t.seed)}</span>` : ''}
+            ${t.political ? `<span class="pill p-crit">${ICON.flag}Political: needs your sign-off</span>` : ''}
+            <span class="src">${esc(t.src)}</span>
+          </div>
+          <div class="reject-box"><span style="font-size:12px; color:var(--muted); align-self:center">Why not?</span>
+            <button data-reason="Not my angle">Not my angle</button><button data-reason="Already covered">Already covered</button><button data-reason="Too political">Too political</button><button data-reason="Weak sources">Weak sources</button>
+          </div>
+        </div>
+        <div class="t-act">
+          <button class="btn btn-primary btn-sm" data-act="approve">Approve · write it</button>
+          <button class="btn btn-line btn-sm" data-act="snooze">Later</button>
+          <button class="btn btn-ghost btn-sm" data-act="reject">Skip</button>
+        </div>
+      </article>`).join('');
+    updateCounts();
+  }
+  function renderDrafts(){
+    const box = $('#tabDrafts');
+    if (!drafts.length) { box.innerHTML = '<div class="empty">No drafts waiting. Approve a topic and the engine writes one.</div>'; updateCounts(); return; }
+    box.innerHTML = drafts.map(d => `
+      <article class="draft" data-id="${d.id}">
+        <div>
+          <h3>${esc(d.title)}</h3>
+          <div class="meta">
+            ${d.status === 'drafting' ? `<span class="pill p-blue">Engine drafting</span><span class="progress"><i></i></span>` :
+              d.status === 'published' ? `<span class="pill p-good">Published</span>` : `<span class="pill p-warn">Ready for your edit</span>`}
+            <span class="pill p-gray">${esc(d.theme)}</span>
+            ${d.political ? `<span class="pill p-crit">${ICON.flag}Political</span>` : ''}
+            ${d.status !== 'drafting' ? `<span>${d.words} words · blog post + video brief</span>` : '<span>Blog post + video brief · about a minute</span>'}
+          </div>
+        </div>
+        ${d.status === 'ready' ? `<button class="btn btn-primary" data-open="${d.id}">Review draft</button>` : d.status === 'published' ? `<button class="btn btn-line" data-open="${d.id}">View</button>` : ''}
+      </article>`).join('');
+    updateCounts();
+  }
+  function updateCounts(){
+    const rd = drafts.filter(d => d.status === 'ready').length;
+    $('#tCnt').textContent = topics.length; $('#dCnt').textContent = rd;
+    const w = topics.length + rd;
+    $('#navBadge').textContent = w; $('#navBadge').hidden = !w;
+    $('#kWait').textContent = w; $('#kWaitD').textContent = `${topics.length} topics · ${rd} drafts`;
+  }
+  $$('.tabs button').forEach(b => b.addEventListener('click', () => {
+    $$('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+    $('#tabTopics').hidden = b.dataset.tab !== 'topics'; $('#tabDrafts').hidden = b.dataset.tab !== 'drafts';
+  }));
+
+  function removeTopic(card, then){
+    card.classList.add('leaving');
+    setTimeout(() => { topics = topics.filter(t => t.id !== +card.dataset.id); renderTopics(); then && then(); }, 280);
+  }
+  $('#tabTopics').addEventListener('click', e => {
+    const card = e.target.closest('.topic'); if (!card) return;
+    const t = topics.find(x => x.id === +card.dataset.id);
+    const act = e.target.closest('[data-act]')?.dataset.act, reason = e.target.closest('[data-reason]')?.dataset.reason;
+    if (act === 'approve'){
+      removeTopic(card);
+      const d = { id: nextId++, title: t.title, theme: t.theme, status:'drafting', words: 900 + Math.round(Math.random() * 400), meta: t.why.split('. ')[0] + '.', why: t.why, political: !!t.political, markers:3 };
+      drafts.unshift(d); renderDrafts();
+      toast('Approved. The content agent is writing the draft and video brief.');
+      setTimeout(() => { d.status = 'ready'; renderDrafts(); toast('New draft ready for your edit'); }, 3200);
+    } else if (act === 'snooze'){ removeTopic(card); toast('Moved to later. It comes back in the next research run.'); }
+    else if (act === 'reject'){ card.classList.toggle('rejecting'); }
+    else if (reason){ removeTopic(card); toast(`Skipped: ${reason}. The engine will score similar stories lower.`); }
+  });
+
+  // Run research now
+  $('#runBtn').addEventListener('click', () => {
+    const b = $('#runBtn'); b.disabled = true; b.lastChild.textContent = 'Researching…';
+    $('#enginePulse').classList.add('run'); $('#engineState').textContent = 'Engine researching';
+    setTimeout(() => {
+      const fresh = NEW_TOPICS.splice(0, 2);
+      seeds.filter(s => s.active).slice(0, 1).forEach(s => { if (fresh[0] && !fresh[0].seed) fresh[0].seed = s.topic; });
+      fresh.forEach(f => topics.push({ id: nextId++, ...f }));
+      renderTopics();
+      b.disabled = false; b.lastChild.textContent = 'Run research now';
+      $('#enginePulse').classList.remove('run'); $('#engineState').textContent = 'Neural engine online';
+      $('#lastRun').textContent = 'Today, ' + new Date().toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+      toast(fresh.length ? `${fresh.length} new topics ready for approval` : 'No new topics found this run');
+    }, 2400);
+  });
+
+  /* ---------------- Drawer ---------------- */
+  const drawer = $('#drawer'), veil = $('#veil');
+  function openDrawer(on){ drawer.classList.toggle('on', on); veil.classList.toggle('on', on); drawer.setAttribute('aria-hidden', !on); }
+  $('#dClose').addEventListener('click', () => openDrawer(false)); veil.addEventListener('click', () => openDrawer(false));
+  addEventListener('keydown', e => { if (e.key === 'Escape') openDrawer(false); });
+
+  $('#tabDrafts').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b) openDraft(drafts.find(d => d.id === +b.dataset.open)); });
+
+  function openDraft(d){
+    const ro = d.status === 'published';
+    $('#dTitle').textContent = ro ? 'Published post' : 'Review draft';
+    $('#dPill').innerHTML = d.political ? `<span class="pill p-crit">${ICON.flag}Political</span>` : `<span class="pill p-gray">${esc(d.theme)}</span>`;
+    $('#dBody').innerHTML = `
+      <div class="marker-bar" id="mkBar"></div>
+      <div class="field"><label for="edTitle">Headline</label><input class="inp" id="edTitle" value="${esc(d.title)}" ${ro ? 'disabled' : ''}></div>
+      <div class="field"><label for="edMeta">SEO description</label><textarea class="inp" id="edMeta" rows="2" ${ro ? 'disabled' : ''}>${esc(d.meta)}</textarea><span class="hint"><span id="metaN">0</span> / 155 characters</span></div>
+      <div class="field"><span class="flabel">Post</span><span class="hint">Click a yellow marker to replace it with your own words.</span><div class="body-ed" id="edBody" contenteditable="${!ro}">${d.body || DRAFT_BODY(d)}</div></div>
+      <div class="brief"><span class="flabel">Video brief for this post</span><ol>
+        <li>Open with the one-sentence takeaway, straight to camera.</li><li>Tell the story from your marker above in under 45 seconds.</li><li>Walk through the three actions for this quarter.</li><li>Close by pointing to the free Partner Starter Kit.</li></ol></div>
+      ${d.political && !ro ? `<label class="check"><input type="checkbox" id="polOk"> I've checked the political and legal claims in this post and I'm comfortable publishing them under my name.</label>` : ''}`;
+    const body = $('#edBody');
+    const upd = () => {
+      const left = body.querySelectorAll('[data-mk]').length; d.markers = left;
+      const bar = $('#mkBar');
+      bar.className = 'marker-bar' + (left ? '' : ' done');
+      bar.textContent = ro ? 'Published to the Latest section of the site.' : left ? `${left} ${left > 1 ? 'spots need' : 'spot needs'} your input before publishing` : 'All your input is in. Ready to publish.';
+      $('#metaN').textContent = $('#edMeta').value.length;
+      const pub = $('#pubBtn'); if (pub) pub.disabled = left > 0 || (d.political && !$('#polOk')?.checked);
+    };
+    body.addEventListener('click', e => {
+      const m = e.target.closest('[data-mk]'); if (!m || ro) return;
+      const span = document.createElement('span'); span.textContent = '';
+      const txt = document.createTextNode('​'); m.replaceWith(txt);
+      const r = document.createRange(); r.setStart(txt, 1); r.collapse(true); const s = getSelection(); s.removeAllRanges(); s.addRange(r); body.focus();
+      upd();
+    });
+    body.addEventListener('input', upd); $('#edMeta').addEventListener('input', upd);
+    $('#polOk')?.addEventListener('change', upd);
+    $('#dFoot').innerHTML = ro ? `<span class="note">Published by you. Edits to live posts happen on the site editor at build.</span>` :
+      `<span class="note">Nothing publishes without your approval.</span>
+       <button class="btn btn-line" id="saveBtn">Save</button>
+       <button class="btn btn-line" id="redoBtn">Ask engine to rewrite</button>
+       <button class="btn btn-good" id="pubBtn">Approve & publish</button>`;
+    if (!ro){
+      const save = () => { d.title = $('#edTitle').value; d.meta = $('#edMeta').value; d.body = body.innerHTML; };
+      $('#saveBtn').onclick = () => { save(); renderDrafts(); toast('Draft saved'); };
+      $('#redoBtn').onclick = () => { save(); d.status = 'drafting'; d.body = null; renderDrafts(); openDrawer(false); toast('Sent back to the engine for a rewrite'); setTimeout(() => { d.status = 'ready'; renderDrafts(); }, 3200); };
+      $('#pubBtn').onclick = () => { save(); d.status = 'published'; renderDrafts(); openDrawer(false); toast('Published. It now appears in The Latest from Ahsan on the site.'); };
+    }
+    upd(); openDrawer(true);
+  }
+
+
+  /* ---------------- Meeting requests (from the site's Book a meeting page) ---------------- */
+  const D0 = new Date(); D0.setHours(0, 0, 0, 0);
+  const mondayOf = d => { const x = new Date(d); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); x.setHours(0, 0, 0, 0); return x; };
+  // Sample requests land in the next working week so they are always upcoming
+  const ANCHOR = mondayOf(D0); if (D0.getDay() === 0 || D0.getDay() >= 4) ANCHOR.setDate(ANCHOR.getDate() + 7);
+  const at = (dayOff, mins) => { const d = new Date(ANCHOR); d.setDate(d.getDate() + dayOff); d.setMinutes(mins); return d; };
+  const ago = h => new Date(Date.now() - h * 3600e3);
+  let meetings = [
+    { id:'m1', name:'Daniel Okafor', email:'daniel.okafor@halcyondata.example', role:'VP / Director', title:'VP, Partnerships', company:'Halcyon Data Systems', site:'halcyondata.example', size:'201–1,000', age:'5–10 years', industry:'Software / SaaS', revenue:'$50M–$250M', needs:['Partnerships & alliances','Go-to-market'], note:'Partner-sourced revenue has been flat for two years. We are rebuilding the partner program and want an outside view before we restructure the team.', src:'LinkedIn', type:'Intro call', mins:30, start:at(1, 600), status:'pending', reqAt:ago(5), unread:true },
+    { id:'m2', name:'Rachel Kim', email:'rachel@ledgerpath.example', role:'Founder / Owner / CEO', title:'Founder & CEO', company:'Ledgerpath', site:'ledgerpath.example', size:'11–50', age:'1–3 years', industry:'Financial services', revenue:'$1M–$10M', needs:['AI strategy & adoption','Capital & investors'], note:'We are raising a seed extension and need a sharper story on how we use AI in underwriting. Also open to intros to enterprise partners.', src:'YouTube', type:'Strategy session', mins:60, start:at(2, 780), status:'pending', reqAt:ago(20), unread:true },
+    { id:'m3', name:'Marcus Webb', email:'mwebb@ironbridgecap.example', role:'Investor / PE / Family office', title:'Managing Director', company:'Ironbridge Capital', site:'ironbridgecap.example', size:'51–200', age:'10+ years', industry:'Private equity / investment', revenue:'Prefer not to say', needs:['AI strategy & adoption','Technology & software'], note:'Looking at AI readiness for two portfolio companies before our next board cycle. Would value a diligence perspective.', src:'Referral', type:'Strategy session', mins:60, start:at(0, 840), status:'confirmed', reqAt:ago(52) },
+    { id:'m4', name:'Elena Ruiz', email:'eruiz@corvane.example', role:'VP / Director', title:'Director of Alliances', company:'Corvane Manufacturing', site:'corvane.example', size:'1,000+', age:'10+ years', industry:'Manufacturing', revenue:'$250M+', needs:['Enterprise sales','Partnerships & alliances'], note:'We sell through distributors and want to add a direct enterprise motion without upsetting the channel.', src:'Event or podcast', type:'Intro call', mins:30, start:at(3, 570), status:'pending', reqAt:ago(28) },
+    { id:'m5', name:'Priya Nair', email:'priya@fieldstone.example', role:'VP / Director', title:'Head of GTM', company:'Fieldstone Analytics', site:'fieldstone.example', size:'51–200', age:'3–5 years', industry:'Software / SaaS', revenue:'$10M–$50M', needs:['Go-to-market'], note:'Moving upmarket from mid-market to enterprise. Need help with pricing and the sales motion.', src:'LinkedIn', type:'Intro call', mins:30, start:at(4, 660), status:'confirmed', reqAt:ago(70) },
+    { id:'m6', name:'Tom Becker', email:'tom@beckerhvac.example', role:'Founder / Owner / CEO', title:'Owner', company:'Becker & Sons HVAC', site:'', size:'11–50', age:'10+ years', industry:'Professional services', revenue:'$1M–$10M', needs:['AI strategy & adoption'], note:'Family business, three generations. We want to start using AI for quoting and scheduling but do not know where to begin.', src:'Search', type:'Intro call', mins:30, start:at(3, 900), status:'pending', reqAt:ago(3), unread:true },
+    { id:'m7', name:'Jordan Ellis', email:'jordan.ellis@example.com', role:'Manager', title:'Senior Partner Manager', company:'Independent', site:'', size:'Just me', age:'Under 1 year', industry:'IT & managed services', revenue:'', needs:['Career & leadership coaching'], note:'Moving from partner manager to head of alliances. Want coaching on the first 90 days.', src:'Newsletter', type:'Private 1:1 session', mins:60, start:at(8, 960), status:'pending', reqAt:ago(30) },
+    { id:'m8', name:'Sofia Marquez', email:'smarquez@brightline.example', role:'C-suite executive', title:'COO', company:'Brightline Health Partners', site:'brightline.example', size:'201–1,000', age:'5–10 years', industry:'Healthcare', revenue:'$50M–$250M', needs:['Technology & software','AI strategy & adoption'], note:'Evaluating vendors for an AI patient-intake pilot and want an independent view on build vs. buy.', src:'Referral', type:'Strategy session', mins:60, start:at(9, 600), status:'confirmed', reqAt:ago(40) }
+  ];
+  let wkStart = new Date(ANCHOR), mFilter = 'pending', selM = null;
+  const HOUR0 = 8, HOUR1 = 18, PX = 48;
+  const tfmt = d => d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+  const dfmt = d => d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+  const sfmt = d => d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+  const initials = n => n.split(' ').map(x => x[0]).slice(0, 2).join('');
+  const sameDay = (a, b) => a.toDateString() === b.toDateString();
+  const end = m => new Date(m.start.getTime() + m.mins * 60e3);
+  const relAgo = d => { const h = Math.round((Date.now() - d) / 3600e3); return h < 1 ? 'just now' : h < 24 ? `${h}h ago` : `${Math.round(h / 24)}d ago`; };
+  const STATUS = { pending:['p-blue','Needs reply'], confirmed:['p-good','Confirmed'], suggested:['p-warn','New time proposed'], declined:['p-gray','Declined'] };
+
+  function renderWeek(){
+    const days = [...Array(5)].map((_, i) => { const d = new Date(wkStart); d.setDate(d.getDate() + i); return d; });
+    const last = days[4];
+    $('#wkLabel').textContent = `${days[0].toLocaleDateString('en-US', { month:'short', day:'numeric' })} – ${last.toLocaleDateString('en-US', { month: days[0].getMonth() === last.getMonth() ? undefined : 'short', day:'numeric' })}, ${last.getFullYear()}`;
+    let html = '<div></div>' + days.map(d => `<div class="wk-dh${sameDay(d, new Date()) ? ' today' : ''}"><b>${d.toLocaleDateString('en-US', { weekday:'short' })}</b><span>${d.getDate()}</span></div>`).join('');
+    html += `<div class="wk-times">${[...Array(HOUR1 - HOUR0)].map((_, i) => `<div>${i ? ((HOUR0 + i + 11) % 12 + 1) + (HOUR0 + i < 12 ? ' AM' : ' PM') : ''}</div>`).join('')}</div>`;
+    days.forEach(d => {
+      let col = `<div class="wk-col" style="height:${(HOUR1 - HOUR0) * PX}px">`;
+      meetings.filter(m => m.status !== 'declined' && sameDay(m.start, d)).forEach(m => {
+        const top = ((m.start.getHours() - HOUR0) * 60 + m.start.getMinutes()) / 60 * PX, h = Math.max(26, m.mins / 60 * PX - 2);
+        col += `<button type="button" class="ev ${m.status}${selM === m.id ? ' hl' : ''}" data-m="${m.id}" style="top:${top}px; height:${h}px" aria-label="${esc(m.name)}, ${esc(m.company)}, ${tfmt(m.start)}, ${STATUS[m.status][1]}"><b>${esc(m.name)}</b>${h > 30 ? `<span>${tfmt(m.start)} · ${esc(m.company)}</span>` : ''}</button>`;
+      });
+      const now = new Date();
+      if (sameDay(now, d) && now.getHours() >= HOUR0 && now.getHours() < HOUR1) col += `<div class="now-line" style="top:${((now.getHours() - HOUR0) * 60 + now.getMinutes()) / 60 * PX}px"></div>`;
+      html += col + '</div>';
+    });
+    $('#wk').innerHTML = html;
+  }
+  function renderReqs(){
+    const list = meetings.filter(m => mFilter === 'all' ? true : mFilter === 'pending' ? (m.status === 'pending' || m.status === 'suggested') : m.status === mFilter)
+      .sort((a, b) => a.start - b.start);
+    $('#reqList').innerHTML = list.length ? list.map(m => `<button type="button" class="req${selM === m.id ? ' sel' : ''}" data-m="${m.id}">
+        <span class="av">${initials(m.name)}</span>
+        <span><b>${esc(m.name)}${m.unread ? '<i class="new" aria-label="New"></i>' : ''}</b><span class="co">${esc(m.company)} · ${esc(m.size)}</span><span class="when" style="display:block">${sfmt(m.start)}, ${tfmt(m.start)} · ${esc(m.type)}</span></span>
+        <span class="pill ${STATUS[m.status][0]}">${STATUS[m.status][1]}</span></button>`).join('')
+      : `<p style="padding:18px; color:var(--muted); font-size:13px">Nothing here right now.</p>`;
+    const pend = meetings.filter(m => m.status === 'pending').length;
+    $('#mPend').textContent = pend;
+    const two = new Date(D0); two.setDate(two.getDate() + 14);
+    $('#mConf').textContent = meetings.filter(m => m.status === 'confirmed' && m.start >= D0 && m.start <= two).length;
+    $('#mMonth').textContent = meetings.length;
+    $('#navMeet').textContent = pend; $('#navMeet').hidden = !pend;
+  }
+  function renderMeetings(){ renderWeek(); renderReqs(); }
+  $('#wkPrev').onclick = () => { wkStart.setDate(wkStart.getDate() - 7); renderWeek(); };
+  $('#wkNext').onclick = () => { wkStart.setDate(wkStart.getDate() + 7); renderWeek(); };
+  $('#wkToday').onclick = () => { wkStart = mondayOf(new Date()); renderWeek(); };
+  document.querySelector('.mfilter').addEventListener('click', e => {
+    const b = e.target.closest('[data-mf]'); if (!b) return;
+    mFilter = b.dataset.mf; $$('.mfilter button').forEach(x => x.classList.toggle('on', x === b)); renderReqs();
+  });
+  const pickM = e => { const b = e.target.closest('[data-m]'); if (b) openMeeting(meetings.find(m => m.id === b.dataset.m)); };
+  $('#wk').addEventListener('click', pickM); $('#reqList').addEventListener('click', pickM);
+
+  function openMeeting(m){
+    selM = m.id; m.unread = false;
+    wkStart = mondayOf(m.start); renderMeetings();
+    $('#dTitle').textContent = m.name;
+    $('#dPill').innerHTML = `<span class="pill ${STATUS[m.status][0]}">${STATUS[m.status][1]}</span>`;
+    const mon = m.start.toLocaleDateString('en-US', { month:'short' });
+    $('#dBody').innerHTML = `
+      <div class="m-when"><div class="m-cal"><b>${mon}</b><span>${m.start.getDate()}</span></div>
+        <div><h3>${esc(m.type)} · ${m.mins} min</h3><p>${dfmt(m.start)}, ${tfmt(m.start)}–${tfmt(end(m))} CT</p><p>Requested ${relAgo(m.reqAt)}${m.src ? ' · found you via ' + esc(m.src) : ''}</p></div></div>
+      <div><div class="sec-t">Contact</div><dl class="dl">
+        <dt>Name</dt><dd>${esc(m.name)}</dd><dt>Title</dt><dd>${esc(m.title)} <span style="color:var(--muted); font-weight:500">(${esc(m.role)})</span></dd>
+        <dt>Email</dt><dd>${esc(m.email)}</dd></dl></div>
+      <div><div class="sec-t">Business</div><dl class="dl">
+        <dt>Company</dt><dd>${esc(m.company)}${m.site ? ` · <span style="color:var(--blue)">${esc(m.site)}</span>` : ''}</dd>
+        <dt>Size</dt><dd>${esc(m.size)} people</dd><dt>Time in business</dt><dd>${esc(m.age)}</dd>
+        <dt>Industry</dt><dd>${esc(m.industry)}</dd><dt>Annual revenue</dt><dd>${esc(m.revenue || 'Not shared')}</dd></dl></div>
+      <div><div class="sec-t">Wants help with</div><div class="chips">${m.needs.map(n => `<span class="chip" style="padding-right:10px">${esc(n)}</span>`).join('')}</div></div>
+      <div><div class="sec-t">In their words</div><p class="quote">${esc(m.note)}</p></div>
+      <div class="alt" id="alt"><div class="field"><label for="altSlot">Suggest a different time</label><select class="inp" id="altSlot">${altSlots(m).map(d => `<option value="${d.getTime()}">${sfmt(d)}, ${tfmt(d)} CT</option>`).join('')}</select></div><button class="btn btn-primary" type="button" id="altSend">Send suggestion</button></div>`;
+    const foot = $('#dFoot');
+    if (m.status === 'confirmed') foot.innerHTML = `<span class="note">On your calendar. The invite and video link went out when you confirmed.</span><button class="btn btn-line" id="mAlt">Reschedule</button><button class="btn btn-ghost" id="mDecline">Cancel meeting</button>`;
+    else if (m.status === 'declined') foot.innerHTML = `<span class="note">You declined this request.</span><button class="btn btn-line" id="mReopen">Reopen</button>`;
+    else foot.innerHTML = `<span class="note">${m.status === 'suggested' ? 'Waiting for them to accept your new time.' : 'They are waiting on your reply.'}</span><button class="btn btn-ghost" id="mDecline">Decline</button><button class="btn btn-line" id="mAlt">Suggest another time</button><button class="btn btn-good" id="mOk">Confirm &amp; send invite</button>`;
+    const first = m.name.split(' ')[0];
+    const set = (s, msg) => { m.status = s; renderMeetings(); openMeeting(m); toast(msg); };
+    $('#mOk') && ($('#mOk').onclick = () => set('confirmed', `Confirmed. ${first} gets a calendar invite with the video link.`));
+    $('#mDecline') && ($('#mDecline').onclick = () => { set('declined', `Declined. ${first} gets a polite note with a link to rebook.`); });
+    $('#mReopen') && ($('#mReopen').onclick = () => set('pending', 'Request reopened'));
+    $('#mAlt') && ($('#mAlt').onclick = () => { $('#alt').classList.add('on'); $('#altSlot').focus(); });
+    $('#altSend').onclick = () => { m.start = new Date(+$('#altSlot').value); set('suggested', `New time sent to ${first}. It confirms when they accept.`); };
+    openDrawer(true);
+  }
+  function altSlots(m){
+    const out = [], d = new Date(m.start);
+    for (let i = 0; out.length < 6 && i < 14; i++){
+      d.setDate(d.getDate() + (i ? 1 : 0)); if (d.getDay() === 0 || d.getDay() === 6) continue;
+      [600, 840].forEach(min => { const s = new Date(d); s.setHours(0, min, 0, 0); if (s > m.start && !meetings.some(x => x !== m && x.status !== 'declined' && Math.abs(x.start - s) < 60 * 60e3)) out.push(s); });
+    }
+    return out.slice(0, 6);
+  }
+  veil.addEventListener('click', () => { selM = null; renderMeetings(); });
+  $('#dClose').addEventListener('click', () => { selM = null; renderMeetings(); });
+
+  /* ---------------- Steer the engine ---------------- */
+  let seeds = [
+    { topic:'Hyperscaler co-sell programs', prio:'Always cover', type:'Theme', matches:6, active:true },
+    { topic:'Partner-led M&A', prio:'Boost', type:'Theme', matches:3, active:true },
+    { topic:'Alliance KPIs', prio:'Watch', type:'Theme', matches:1, active:true }
+  ];
+  let avoid = ['Crypto price moves', 'Celebrity CEO gossip'];
+  const PRIO_CLASS = { 'Always cover':'p-dark', 'Boost':'p-blue', 'Watch':'p-gray' };
+  function renderSeeds(){
+    const act = seeds.filter(s => s.active).length;
+    $('#seedSub').textContent = `${act} active`; $('#seedCountSide').textContent = `${act} active`;
+    $('#seedRows').innerHTML = seeds.length ? seeds.map((s, i) => `<tr style="opacity:${s.active ? 1 : .5}">
+      <td><b style="font-weight:600">${esc(s.topic)}</b><div style="font-size:12px; color:var(--muted)">${esc(s.type)}${s.angle ? ' · angle: ' + esc(s.angle) : ''}</div></td>
+      <td><span class="pill ${PRIO_CLASS[s.prio]}">${s.prio}</span></td>
+      <td class="r num">${s.active ? s.matches : '–'}</td>
+      <td class="r" style="white-space:nowrap"><button class="icon-btn" data-pause="${i}">${s.active ? 'Pause' : 'Resume'}</button><button class="icon-btn" data-del="${i}">Remove</button></td></tr>`).join('')
+      : `<tr><td colspan="4" style="color:var(--muted)">No topics yet. Add one on the left.</td></tr>`;
+  }
+  $('#seedRows').addEventListener('click', e => {
+    const p = e.target.closest('[data-pause]'), d = e.target.closest('[data-del]');
+    if (p){ const s = seeds[+p.dataset.pause]; s.active = !s.active; renderSeeds(); toast(s.active ? `Resumed: ${s.topic}` : `Paused: ${s.topic}`); }
+    if (d){ const s = seeds.splice(+d.dataset.del, 1)[0]; renderSeeds(); toast(`Removed: ${s.topic}`); }
+  });
+  $('#seedForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const topic = $('#sTopic').value.trim(); if (!topic) return;
+    seeds.unshift({ topic, type: $('#sType').value, prio: document.querySelector('input[name="prio"]:checked').value, angle: $('#sAngle').value.trim(), matches: 0, active: true });
+    e.target.reset(); renderSeeds();
+    toast(`Added. "${topic}" goes into the next research run.`);
+  });
+  const STAR = '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.2l2.1 4.3 4.7.7-3.4 3.3.8 4.7L8 12l-4.2 2.2.8-4.7L1.2 6.2l4.7-.7z"/></svg>';
+  let MIX = [['Partner ecosystems', 30], ['AI adoption', 22], ['Enterprise tech', 16], ['Deals & earnings', 14], ['Research & data', 10], ['Policy & regulation', 8]]
+    .map(([name, v]) => ({ name, v, prio: name === 'Partner ecosystems', custom: false }));
+  // Starred themes get a score boost in research, on top of their share of the run
+  const share = m => { const total = MIX.reduce((s, x) => s + x.v, 0) || 1; return Math.round(m.v / total * 100) + '%'; };
+  function renderMix(freshIdx){
+    $('#themes').innerHTML = MIX.map((m, i) => `<div class="slider-row${i === freshIdx ? ' fresh' : ''}">
+        <span class="nm"><label for="mix${i}">${esc(m.name)}</label>${m.custom ? '<span class="pill p-blue">Yours</span>' : ''}${m.prio ? '<span class="pill p-warn">Priority</span>' : ''}</span>
+        <input type="range" id="mix${i}" min="0" max="50" value="${m.v}" data-i="${i}">
+        <span class="n num">${share(m)}</span>
+        <span class="acts"><button type="button" class="star" data-star="${i}" aria-pressed="${m.prio}" aria-label="${m.prio ? 'Remove priority from' : 'Make priority:'} ${esc(m.name)}" title="${m.prio ? 'Priority: matching stories score higher' : 'Mark as priority'}">${STAR}</button>${m.custom ? `<button type="button" class="star" data-rm="${i}" aria-label="Remove ${esc(m.name)}" title="Remove">${ICON.x}</button>` : ''}</span>
+      </div>`).join('')
+      + `<p style="font-size:12px; color:var(--muted); margin-top:10px">The slider sets how much of each research run goes to a theme. A star tells the engine to rank that theme's stories higher. Political topics always need your sign-off.</p>`;
+    if (freshIdx != null) setTimeout(() => $$('#themes .slider-row')[freshIdx]?.classList.remove('fresh'), 1400);
+  }
+  $('#themes').addEventListener('input', e => {
+    const i = e.target.dataset.i; if (i == null) return;
+    MIX[i].v = +e.target.value;
+    $$('#themes .slider-row .n').forEach((n, k) => n.textContent = share(MIX[k]));
+  });
+  $('#themes').addEventListener('change', e => { if (e.target.dataset.i != null) toast('Theme mix saved for the next run'); });
+  $('#themes').addEventListener('click', e => {
+    const st = e.target.closest('[data-star]'), rm = e.target.closest('[data-rm]');
+    if (st){ const m = MIX[+st.dataset.star]; m.prio = !m.prio; renderMix(); toast(m.prio ? `${m.name} is now a priority theme` : `${m.name} is back to standard priority`); }
+    if (rm){ const m = MIX.splice(+rm.dataset.rm, 1)[0]; renderMix(); toast(`Removed ${m.name} from the theme mix`); }
+  });
+  $('#themeForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = $('#themeInp').value.trim(); if (!name) { $('#themeInp').focus(); return; }
+    if (MIX.some(m => m.name.toLowerCase() === name.toLowerCase())) { toast(`${name} is already in your theme mix`); return; }
+    const v = +$('#themePrio').value;
+    MIX.unshift({ name, v, prio: v >= 35, custom: true });
+    $('#themeInp').value = ''; renderMix(0);
+    toast(v >= 35 ? `Added ${name} as a priority theme. It shapes the next research run.` : `Added ${name}. It shapes the next research run.`);
+  });
+  function renderAvoid(){ $('#avoidChips').innerHTML = avoid.map((a, i) => `<span class="chip">${esc(a)}<button aria-label="Remove ${esc(a)}" data-av="${i}">${ICON.x}</button></span>`).join(''); }
+  $('#avoidForm').addEventListener('submit', e => { e.preventDefault(); const v = $('#avoidInp').value.trim(); if (!v) return; avoid.push(v); $('#avoidInp').value = ''; renderAvoid(); toast(`The engine will skip "${v}"`); });
+  $('#avoidChips').addEventListener('click', e => { const b = e.target.closest('[data-av]'); if (b){ avoid.splice(+b.dataset.av, 1); renderAvoid(); } });
+
+  /* ---------------- Products ---------------- */
+  let products = [
+    { id:'kit', name:'AI Partner Starter Kit', tier:'Free asset', price:0, live:true, units:1842, conv:'3.1% of visitors', desc:'10 AI use cases for partners plus the quarterly Ecosystem Trends Brief.', file:'ai-partner-starter-kit.pdf', icon:'MD' },
+    { id:'playbook', name:'How Enterprises Actually Buy', tier:'Program', price:169, live:true, units:0, conv:'', desc:'Complete downloadable program with frameworks, templates, AI prompts and examples.', file:'how-enterprises-actually-buy.zip', icon:'HEAB' },
+    { id:'toolkit', name:'AI Deal Intelligence', tier:'Membership', price:49, live:true, units:0, conv:'', desc:'Weekly insights, trends, use cases, buying signals and actionable guidance.', file:'', icon:'AIDI' },
+    { id:'coaching', name:'Private 1:1 Sessions', tier:'1:1 sessions', price:0, custom:true, live:true, units:0, conv:'', desc:'Career strategy, deal coaching or specific challenges. Priced per engagement.', file:'', icon:'1:1' }
+  ];
+  function renderProducts(){
+    const cur = slice(30);
+    const tk = sum(cur, x => x.tk), pb = sum(cur, x => x.pb);
+    products.find(p => p.id === 'toolkit').units = tk; products.find(p => p.id === 'playbook').units = pb; products.find(p => p.id === 'coaching').units = Math.max(1, Math.round(pb * .45));
+    $('#prodList').innerHTML = products.map(p => `
+      <article class="prod">
+        <div class="p-ico">${p.icon}</div>
+        <div><span class="pill p-gray">${esc(p.tier)}</span><h3 style="margin-top:6px">${esc(p.name)}</h3><p class="desc">${esc(p.desc)}</p></div>
+        <div class="stat"><div class="k">Price</div><div class="v num">${p.custom ? 'Custom' : p.price ? money(p.price) + (p.tier === 'Membership' ? '/mo' : '') : 'Free'}</div></div>
+        <div class="stat"><div class="k">${p.custom ? 'Requests (30d)' : p.tier === 'Membership' ? 'New members (30d)' : p.price ? 'Sold (30d)' : 'Downloads (30d)'}</div><div class="v num">${fmt(p.units)}</div></div>
+        <div class="stat"><div class="k">Revenue (30d)</div><div class="v num">${p.price ? money(p.units * p.price) : '–'}</div></div>
+        <div style="display:flex; align-items:center; gap:14px">
+          <label class="status-cell"><span class="switch"><input type="checkbox" data-live="${p.id}" ${p.live ? 'checked' : ''} aria-label="Show ${esc(p.name)} on site"><span></span></span>${p.live ? 'Live' : 'Hidden'}</label>
+          <button class="btn btn-line btn-sm" data-edit="${p.id}">Edit</button>
+        </div>
+      </article>`).join('');
+  }
+  $('#prodList').addEventListener('change', e => {
+    const id = e.target.dataset.live; if (!id) return;
+    const p = products.find(x => x.id === id); p.live = e.target.checked; renderProducts();
+    toast(p.live ? `${p.name} is live on the site` : `${p.name} is hidden from the site`);
+  });
+  $('#prodList').addEventListener('click', e => { const b = e.target.closest('[data-edit]'); if (b) openProduct(products.find(p => p.id === b.dataset.edit)); });
+  $('#addProd').addEventListener('click', () => {
+    const p = { id:'p' + (nextId++), name:'', tier:'Program', price:0, live:false, units:0, desc:'', file:'', icon:'NEW', isNew:true };
+    openProduct(p);
+  });
+  function openProduct(p){
+    $('#dTitle').textContent = p.isNew ? 'New product' : 'Edit product';
+    $('#dPill').innerHTML = p.live ? '<span class="pill p-good">Live</span>' : '<span class="pill p-gray">Hidden</span>';
+    $('#dBody').innerHTML = `
+      <div class="field"><label for="pName">Product name</label><input class="inp" id="pName" value="${esc(p.name)}" placeholder="e.g. Alliance KPI Scorecard"></div>
+      <div class="three">
+        <div class="field"><label for="pTier">Tier</label><select class="inp" id="pTier">${['Free asset','Program','Membership','1:1 sessions','Workshop'].map(t => `<option ${t === p.tier ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+        <div class="field"><label for="pPrice">Price (USD)</label><input class="inp num" id="pPrice" type="number" min="0" step="1" value="${p.price}"></div>
+        <div class="field"><label for="pLive">Status</label><select class="inp" id="pLive"><option value="1" ${p.live ? 'selected' : ''}>Live</option><option value="0" ${!p.live ? 'selected' : ''}>Hidden</option></select></div>
+      </div>
+      <div class="field"><label for="pDesc">Short description</label><textarea class="inp" id="pDesc" rows="3" placeholder="One or two sentences shown on the product tile.">${esc(p.desc)}</textarea></div>
+      <div class="field"><label for="pFile">Delivery file</label><input class="inp" id="pFile" type="file"><span class="hint">${p.file ? 'Current file: ' + esc(p.file) : 'No file yet. Buyers get this link by email after checkout.'}</span></div>
+      <div class="brief"><span class="flabel">Where this shows up</span><ol><li>Product tile in The Evolve Library on the site</li><li>Checkout and delivery email</li><li>Links the engine adds to related blog posts</li></ol></div>`;
+    $('#dFoot').innerHTML = `${!p.isNew ? '<button class="btn btn-ghost" id="pHide">Hide from site</button>' : ''}<span class="note"></span><button class="btn btn-line" id="pCancel">Cancel</button><button class="btn btn-primary" id="pSave">Save product</button>`;
+    $('#pCancel').onclick = () => openDrawer(false);
+    if ($('#pHide')) $('#pHide').onclick = () => { p.live = false; renderProducts(); openDrawer(false); toast(`${p.name} is hidden from the site`); };
+    $('#pSave').onclick = () => {
+      const name = $('#pName').value.trim(); if (!name){ $('#pName').focus(); $('#pName').style.borderColor = 'var(--crit)'; return; }
+      p.name = name; p.tier = $('#pTier').value; p.price = Math.max(0, +$('#pPrice').value || 0); p.live = $('#pLive').value === '1'; p.desc = $('#pDesc').value.trim();
+      const f = $('#pFile').files[0]; if (f) p.file = f.name;
+      if (p.isNew){ delete p.isNew; products.push(p); }
+      renderProducts(); openDrawer(false); toast(`Saved ${p.name}`);
+    };
+    openDrawer(true);
+  }
+
+  /* ---------------- Boot ---------------- */
+  $('#rhythmNote').textContent = 'Today is Create day. Two drafts are ready for your edit, and they publish Wednesday once you approve them.';
+  renderOverview(); renderTopics(); renderDrafts(); renderSeeds(); renderMix(); renderAvoid(); renderProducts(); renderMeetings();
+})();
+</script>
+
+</body></html>

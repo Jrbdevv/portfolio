@@ -20,8 +20,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@300;400;500&display=swap" rel="stylesheet">
+  <!-- the Evolve site's own fonts, for its node labels when mirrored onto the zoom-out canvas -->
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/project.css">
+  <link rel="stylesheet" href="../css/evolve-zoom.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230c0c0f'/><polygon points='35,25 75,50 35,75' fill='%23D8FF3E'/></svg>">
 </head>
 <body>
@@ -45,8 +48,24 @@
       for, but no site to sell it from. Working with Sofos Digital, I led the design of one that
       walks a reader from a free download to a paid engagement.</p>
 
-    <!-- ▶ SCREENS: once the site is live, add a hero still here as
-         <div class="case-media"><img src="../assets/FILE.webp" alt="..."></div> -->
+    <!-- The real homepage, driven by scroll: zoom in, neural engine, zoom out, walk
+         through the page. See js/evolve-zoom.js. projects/evolve/ is the prototype,
+         copied unchanged apart from a noindex tag. -->
+    <section class="ev-zoom" aria-label="The Evolve Partners homepage">
+      <div class="ev-sticky">
+        <div class="ev-bg" aria-hidden="true"></div>
+        <p class="ev-caption">The homepage. Keep scrolling to go inside.</p>
+        <div class="ev-frame">
+          <div class="ev-chrome" aria-hidden="true"><i></i><i></i><i></i><span>Evolve Partners · homepage prototype</span></div>
+          <div class="ev-screen">
+            <img class="ev-still" data-still="start" alt="" decoding="sync">
+            <img class="ev-still" data-still="end" alt="" decoding="sync">
+            <canvas class="ev-mirror" aria-hidden="true"></canvas>
+            <iframe src="evolve/index.html" title="Evolve Partners homepage prototype" scrolling="yes" tabindex="-1"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section class="case-section">
       <h2>The Brief</h2>
@@ -92,6 +111,34 @@
       </ul>
     </section>
 
+    <!-- The Command Center, toured by scroll. Every number in it is generated sample
+         data, and it says so on screen. Steps below map to its own views (data-go). -->
+    <section class="ev-dash" aria-labelledby="dash-title">
+      <div class="ev-dash-inner">
+        <header class="ev-dash-head">
+          <span class="ev-kicker">The Command Center</span>
+          <h2 id="dash-title">One place to run the engine.</h2>
+          <p>The private dashboard behind the site: what's working, what needs a decision, and
+             what the engine should research next.</p>
+        </header>
+        <div class="ev-dash-stage">
+          <div class="ev-frame ev-dash-frame">
+            <div class="ev-chrome" aria-hidden="true"><i></i><i></i><i></i><span>Evolve Command Center · prototype, sample data</span></div>
+            <div class="ev-screen ev-dash-screen">
+              <iframe src="evolve/command-center.html" title="Evolve Command Center prototype, showing sample data" tabindex="-1"></iframe>
+            </div>
+          </div>
+          <ol class="ev-steps">
+            <li data-go="overview"><b>Overview</b><span>Visitors, revenue and the content-to-revenue funnel in one view.</span></li>
+            <li data-go="approvals"><b>Approvals</b><span>Topics and drafts wait here. Nothing publishes without the founder's sign-off.</span></li>
+            <li data-go="meetings"><b>Meetings</b><span>Every session requested through the site, in one list.</span></li>
+            <li data-go="topics"><b>Steer the engine</b><span>The founder sets the themes the research agent follows and what it should never suggest.</span></li>
+            <li data-go="products"><b>Products</b><span>How each paid product in the ladder is performing.</span></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
     <section class="case-section">
       <h2>Workflow &amp; Platforms</h2>
       <div class="toolkit">
@@ -109,12 +156,6 @@
       </div>
     </section>
 
-    <section class="case-section">
-      <h2>Status</h2>
-      <p>Month one, in progress. The follower and email-list baseline is being captured now, so
-         the results will land here once there is a full quarter to measure against.</p>
-    </section>
-
     <a class="case-next" href="bigbattery.html" data-cursor="NEXT">
       <span class="mono">BACK TO CASE 01 →</span>
       <h3>BigBattery: Curing Analysis Paralysis</h3>
@@ -126,5 +167,6 @@
   </main>
 
   <script src="../js/project.js"></script>
+  <script src="../js/evolve-zoom.js"></script>
 </body>
 </html>
