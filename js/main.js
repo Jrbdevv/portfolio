@@ -513,7 +513,7 @@ const viewer = (() => {
   /* new clips are named reel-<name>.mp4, older ones <name>.mp4; both preview as reel-prev-<name>.mp4 */
   const previewOf = (src) => `assets/reel-prev-${src.split("/").pop().replace(/^reel-/, "")}`;
 
-  const makeCard = (track, clip, copy) => {
+  const makeCard = (track, clip) => {
     const card = document.createElement("article");
     card.className = `reel-card ${clip.aspect}`;
     const poster = clip.src.replace(".mp4", "-poster.webp");
@@ -523,40 +523,46 @@ const viewer = (() => {
       `<button class="reel-open" type="button" aria-label="Play ${clip.tag.toLowerCase()} full screen with sound"></button>`;
     const btn = card.querySelector(".reel-open");
     btn.addEventListener("click", () => viewer && viewer.video(clip));
-    /* the second copy only exists so the loop never shows a gap */
-    if (copy) {
-      card.setAttribute("aria-hidden", "true");
-      btn.tabIndex = -1;
-    }
     track.appendChild(card);
   };
-  [REEL_CLIPS, REEL_CLIPS_2].forEach((clips, i) => {
-    const track = tracks[i];
-    if (!track) return;
-    clips.forEach((clip) => makeCard(track, clip, false));
-    if (looping) clips.forEach((clip) => makeCard(track, clip, true));
-  });
-  const videos = [...reel.querySelectorAll("video")];
+  /* each lane holds its clips once; the drift below recycles cards from one
+     end to the other, so a lane never needs a long duplicated strip. iPhone
+     Safari stops painting very wide moving layers (about 4,000px), and a
+     doubled lane of eleven clips ran past that. */
+  REEL_CLIPS.forEach((clip) => makeCard(tracks[0], clip));
+  if (tracks[1]) REEL_CLIPS_2.forEach((clip) => makeCard(tracks[1], clip));
 
   let open = false;
   let onScreen = true;
 
-  /* the drift: each lane scrolls itself a little every frame. The first lane's
-     content travels left to right (its scroll position falls), the second the
-     other way. Both hold the clips twice, so jumping back by one copy's width
-     lands on identical frames and the loop never shows a seam. */
+  /* the drift: each lane scrolls itself a little every frame. The first
+     lane's content travels left to right (its scroll position falls), the
+     second the other way. A card that leaves one edge is moved to the other
+     end and the scroll position is corrected by its width, so nothing jumps. */
   if (looping) {
     const lanes = tracks.map((track, i) => ({
       el: track.parentElement, track, dir: i === 0 ? -1 : 1,
-      half: 0, pos: 0, set: -1, hover: false, hold: 0,
+      pos: 0, set: -1, hover: false, hold: 0,
     }));
-    const measure = () => lanes.forEach((l) => {
-      const half = l.track.scrollWidth / 2;
-      l.pos = l.half ? (l.pos / l.half) * half : (l.dir < 0 ? half : 0);
-      l.half = half;
+    const span = (card) => card.offsetWidth + parseFloat(getComputedStyle(card).marginRight || 0);
+    /* recycling needs a lane at least one card wider than the view; only very
+       wide screens fall short, and they get the clips repeated */
+    const fill = () => lanes.forEach((l) => {
+      const originals = [...l.track.children].filter((c) => !c.hasAttribute("aria-hidden"));
+      const widest = Math.max(...originals.map(span));
+      let guard = 0;
+      while (l.track.scrollWidth < l.el.clientWidth + widest + 40 && guard++ < 4) {
+        originals.forEach((card) => {
+          const copy = card.cloneNode(true);
+          copy.setAttribute("aria-hidden", "true");
+          copy.querySelector(".reel-open").tabIndex = -1;
+          copy.querySelector(".reel-open").addEventListener("click", () => card.querySelector(".reel-open").click());
+          l.track.appendChild(copy);
+        });
+      }
     });
-    measure();
-    window.addEventListener("resize", measure);
+    fill();
+    window.addEventListener("resize", fill);
 
     lanes.forEach((l) => {
       /* a scroll we didn't make is the visitor's: follow it, then wait before taking over again */
@@ -575,16 +581,37 @@ const viewer = (() => {
       l.el.addEventListener("focusout", () => { l.hover = false; });
     });
 
+    const recycle = (l) => {
+      const max = l.track.scrollWidth - l.el.clientWidth;
+      if (l.dir > 0) {
+        /* moving left: the first card has left the view, so it goes to the back */
+        let first = l.track.firstElementChild;
+        while (first && l.pos >= span(first)) {
+          l.pos -= span(first);
+          l.track.appendChild(first);
+          first = l.track.firstElementChild;
+        }
+        if (l.pos > max) l.pos = max;
+      } else {
+        /* moving right: before the start runs out, the last card comes to the front */
+        let last = l.track.lastElementChild;
+        while (last && l.pos <= 0) {
+          l.track.insertBefore(last, l.track.firstElementChild);
+          l.pos += span(last);
+          last = l.track.lastElementChild;
+        }
+      }
+    };
+
     let last = performance.now();
     const tick = (now) => {
       const dt = Math.min(64, now - last) / 1000;
       last = now;
       if (!open && onScreen && !document.hidden) {
         lanes.forEach((l) => {
-          if (l.hover || now < l.hold || !l.half) return;
+          if (l.hover || now < l.hold) return;
           l.pos += l.dir * SPEED_PX_S * dt;
-          if (l.pos < 0) l.pos += l.half;
-          else if (l.pos >= l.half) l.pos -= l.half;
+          recycle(l);
           const px = Math.round(l.pos);
           if (px !== l.set) { l.set = px; l.el.scrollLeft = px; }
         });
@@ -593,6 +620,8 @@ const viewer = (() => {
     };
     requestAnimationFrame(tick);
   }
+
+  const videos = [...reel.querySelectorAll("video")];
 
   /* only clips actually in view are decoded */
   const playIfAllowed = (v) => {

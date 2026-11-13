@@ -389,13 +389,14 @@
           mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
 }
 /* each lane is its own sideways scroller, so a phone can swipe it. js/main.js
-   advances the scroll a little every frame; scrolled content is drawn in
-   tiles, which keeps iPhone Safari from dropping a lane for being too wide
-   (an animated transform on a strip this long simply stops painting there) */
+   advances the scroll a little every frame and recycles cards from one end to
+   the other, so each lane holds its clips once and stays narrow enough for
+   iPhone Safari, which stops painting very wide moving content */
 .reel-lane {
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
+  overflow-anchor: none;   /* cards are moved between the ends; the script corrects the scroll itself */
   scrollbar-width: none;
   /* room above and below for the hover lift and the card shadow */
   padding: 8px 0 18px;
@@ -404,7 +405,7 @@
 .reel-lane + .reel-lane { margin-top: calc(var(--reel-gap) - 26px); }
 .reel-track { display: flex; width: max-content; }
 
-/* a margin rather than a flex gap, so both copies measure the same */
+/* a margin rather than a flex gap, so each card carries its own spacing when it is moved */
 .reel-card {
   position: relative;
   flex: none;
