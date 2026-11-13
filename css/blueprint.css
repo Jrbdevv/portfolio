@@ -211,7 +211,7 @@
 .bp-tl-rail, .bp-tl-fill { position: absolute; left: 0; right: 0; top: 0; height: 2px; }
 .bp-tl-rail { background: var(--hairline); }
 .bp-tl-fill { background: var(--bp-1); transform: scaleX(var(--p, 1)); transform-origin: left; }
-.bp-tl ol { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.bp-tl ol { list-style: none; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
 .bp-tl li { position: relative; padding: 20px 16px 0 0; }
 .bp-tl li::before {
   content: "";
