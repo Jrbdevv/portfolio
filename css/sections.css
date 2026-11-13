@@ -367,10 +367,10 @@
   .hero-play { margin-top: 1rem; }
 }
 
-/* ===== SCENE 02 : MY RECENT WORKS (3D coverflow carousel) =====
-   a focused center clip with neighbours fanned back in perspective, blurred
-   and dimmed. JS positions every card by its offset from the active index,
-   auto-advances every few seconds, and plays only the centre clip. */
+/* ===== MY RECENT WORKS: a panning strip of looping clips =====
+   Two lanes, each a track holding its clips twice; translating a track by half
+   its width brings the second copy exactly where the first began, so the loop
+   never jumps. The pace comes from --reel-dur, set per lane in js/main.js. */
 .footage-head {
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 20px; flex-wrap: wrap;
@@ -379,247 +379,263 @@
 }
 .footage-head .scene-title { margin-bottom: 0; }
 
+/* two lanes: the first pans left to right, the second right to left */
 .reel {
-  /* trimmed from 62vh to 50vh: the stats row below now needs the height, and
-     the point of the section is the work plus its numbers together */
-  --reel-h: clamp(280px, 50vh, 480px);
+  --reel-h: clamp(150px, 21vh, 210px);
+  --reel-gap: 16px;
   position: relative;
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px 0 8px;
-}
-
-/* clips + fades the fanned side cards at the section edges. A dedicated
-   wrapper (not .reel-stage itself) so the clip/mask never touches the nav
-   arrows, which are siblings of this element, not descendants. Without
-   the clip the off-centre cards would extend past the viewport and cause
-   a horizontal scrollbar; the mask turns that cutoff into a soft fade
-   instead of a hard vertical line. */
-.reel-viewport {
-  position: relative;
-  flex: 1;
-  min-width: 0;
+  display: flex; flex-direction: column; gap: var(--reel-gap);
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
-          mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  padding: 14px 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
 }
-
-/* the 3D stage: cards are absolutely centered and transformed by JS */
-.reel-stage {
-  position: relative;
-  width: 100%;
-  height: var(--reel-h);
-  perspective: 1700px;
-  transform-style: preserve-3d;
+.reel-track { display: flex; width: max-content; }
+/* left to right: starts half a pass back and slides forward */
+.reel-track.is-looping { animation: reel-pan var(--reel-dur, 90s) linear infinite; }
+@keyframes reel-pan {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
 }
+.reel-track.is-reverse.is-looping { animation-direction: reverse; }
+/* only the lane under the pointer stops, so the other keeps moving */
+.reel-track:hover,
+.reel-track:focus-within,
+.reel.is-paused .reel-track,
+.reel.is-offscreen .reel-track { animation-play-state: paused; }
 
+/* a margin rather than a flex gap, so both copies measure the same */
 .reel-card {
-  position: absolute;
-  /* top:50% + JS translateY(-50%) keeps cards centred even when their heights
-     differ (mobile, where cards are width-driven instead of height-driven) */
-  top: 50%; left: 50%;
+  position: relative;
+  flex: none;
   height: var(--reel-h);
-  border-radius: 16px;
+  margin-right: var(--reel-gap);
+  border-radius: 14px;
   overflow: hidden;
   background: #14141a;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.55);
-  transform-origin: center center;
-  /* JS drives transform/filter/opacity/zIndex; these are the eased defaults */
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-              filter 0.6s ease, opacity 0.6s ease;
-  will-change: transform, filter, opacity;
+  box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
 }
-/* aspect at the shared height sets each card's width (verticals narrow) */
 .reel-card.tall { aspect-ratio: 9 / 16; }
 .reel-card.wide { aspect-ratio: 16 / 9; }
-
-.reel-card video {
-  width: 100%; height: 100%; object-fit: cover; border: 0;
-  display: block;
-  background: #14141a;
+.reel-card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.reel-card:hover, .reel-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 60px -26px rgba(0, 0, 0, 0.7);
 }
-/* only the active card takes the pointer (neighbours are decorative) */
-.reel-card:not(.is-active) { pointer-events: none; }
-.reel-card.is-active { cursor: pointer; }
-
-/* mute toggle, only on the active card. minimal stroke-icon glyph, no fill,
-   so it reads as a quiet UI control rather than an emoji.
-   Blue on white rather than white-on-translucent: against a light clip the old
-   white glyph and white hairline border disappeared into the footage. */
-.reel-mute {
-  position: absolute; top: 14px; right: 14px; z-index: 3;
-  width: 36px; height: 36px; border-radius: 50%;
-  display: none; align-items: center; justify-content: center;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 2px solid var(--acid);
-  cursor: pointer;
-  color: var(--acid);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
-  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
-}
-.reel-card.is-active .reel-mute { display: flex; }
-/* inverts on hover, matching the nav arrows */
-.reel-mute:hover {
-  background: var(--acid);
-  color: #fff;
-  transform: scale(1.06);
-}
-/* audible state is the loud one, so it reads at a glance */
-.reel-mute.is-live {
-  background: var(--acid);
-  color: #fff;
-}
-.reel-mute.is-live:hover { background: rgba(var(--acid-rgb), 0.85); }
-.reel-mute svg { display: block; pointer-events: none; }
-/* invisible hit-area expansion: the visible circle stays 36px, but clicks
-   land anywhere within this larger zone (a pseudo-element click still
-   targets the real .reel-mute button, so no extra JS is needed) */
-.reel-mute::after {
+/* a shade at the foot, so the label reads over any footage */
+.reel-card::after {
   content: "";
-  position: absolute;
-  inset: -14px;
+  position: absolute; inset: 55% 0 0;
+  background: linear-gradient(transparent, rgba(5, 6, 10, 0.7));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
-
-/* nav arrows: white circle / blue arrow by default, inverts on hover */
-.reel-nav {
-  position: absolute; top: 50%; z-index: 40;
-  transform: translateY(-50%);
-  width: 52px; height: 52px; border-radius: 50%;
+.reel-tag {
+  position: absolute; left: 14px; bottom: 12px; z-index: 2;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.reel-expand {
+  position: absolute; top: 12px; right: 12px; z-index: 2;
+  width: 40px; height: 40px;
   display: flex; align-items: center; justify-content: center;
-  background: #fff;
+  border-radius: 50%;
   border: 2px solid var(--acid);
+  background: rgba(255, 255, 255, 0.94);
   color: var(--acid);
   cursor: pointer;
-  font-size: 22px; line-height: 1;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease, color 0.2s ease;
 }
-.reel-nav:hover { background: var(--acid); color: #fff; }
-.reel-nav.prev { left: clamp(8px, 4vw, 60px); }
-.reel-nav.next { right: clamp(8px, 4vw, 60px); }
+.reel-expand:hover { background: var(--acid); color: #fff; }
+.reel-expand svg { display: block; pointer-events: none; }
+.reel-card:hover::after, .reel-card:focus-within::after,
+.reel-card:hover .reel-tag, .reel-card:focus-within .reel-tag,
+.reel-card:hover .reel-expand, .reel-card:focus-within .reel-expand { opacity: 1; transform: none; }
+/* touch screens have no hover, so the controls are simply there */
+@media (hover: none) {
+  .reel-card::after, .reel-tag, .reel-expand { opacity: 1; transform: none; }
+  .reel-expand { width: 36px; height: 36px; }
+}
 
-/* caption under the stage: reflects the active clip, keeps cards clean */
-.reel-caption {
-  display: flex; align-items: center; justify-content: center;
-  gap: 18px; flex-wrap: wrap;
-  min-height: 2.4em;
-  margin-top: 18px;
-  padding: 0 clamp(20px, 6vw, 90px);
-  text-align: center;
+/* ---- the viewer: the page dims and the clip plays large, with sound ---- */
+.reel-modal {
+  margin: auto;   /* the base reset zeroes margins, which is what centres a dialog */
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #f4f4f1;
+  max-width: min(1240px, 94vw);
+  max-height: 94vh;
+  overflow: visible;
 }
-.reel-caption .footage-tag {
-  color: var(--acid); border-left: 2px solid var(--acid); padding-left: 10px;
+.reel-modal::backdrop {
+  background: rgba(4, 5, 8, 0.88);
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
 }
-.reel-caption .footage-cta {
-  color: var(--bone);
-  border-bottom: 1px solid var(--acid);
-  padding-bottom: 3px;
-  transition: opacity 0.25s ease;
+.reel-modal[open] { animation: reel-modal-in 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes reel-modal-in {
+  from { opacity: 0; transform: scale(0.96); }
 }
-.reel-caption .footage-cta:hover { opacity: 0.6; }
+.reel-modal-media video, .reel-modal-media img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 12px;
+  background: #000;
+}
+.reel-modal-media video.wide { width: min(1240px, 94vw); }
+.reel-modal-media video.tall { height: 80vh; width: auto; }
+.reel-modal-close {
+  position: absolute; top: -48px; right: 0;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(244, 244, 241, 0.4);
+  background: transparent;
+  color: #f4f4f1;
+  font-size: 24px; line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.reel-modal-close:hover { background: #f4f4f1; color: #0c0c0f; }
+.reel-modal-meta {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 14px 28px;
+  margin-top: 16px;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+}
+.reel-modal-tag { color: #8cc0ff; border-left: 2px solid #8cc0ff; padding-left: 10px; }
+.reel-modal-stats { display: flex; gap: 22px; }
+.reel-modal-stats div { display: flex; flex-direction: column; gap: 3px; }
+.reel-modal-stats b { font-family: var(--display); font-size: 1.3rem; letter-spacing: -0.01em; color: #fff; }
+.reel-modal-stats span { font-size: 0.56rem; color: rgba(244, 244, 241, 0.6); }
+.reel-modal-link { color: #f4f4f1; border-bottom: 1px solid #8cc0ff; padding-bottom: 3px; }
+.reel-modal-link:hover { color: #8cc0ff; }
 
-/* ---- per-clip numbers ----
-   Four fixed columns so the row does not reflow as the carousel advances, with
-   hairline dividers between them. Values swap; the labels never move. */
-.reel-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  max-width: 900px;
-  margin: clamp(14px, 2.2vh, 26px) auto 0;
+/* ---- branding & merchandise ---- */
+.brand-wall {
+  max-width: 1180px;
+  margin: clamp(48px, 9vh, 96px) auto 0;
   padding: 0 clamp(20px, 6vw, 90px);
-  text-align: center;
 }
-.reel-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 0 10px;
-}
-.reel-stat + .reel-stat { border-left: 1px solid var(--hairline); }
-.reel-stat-val {
+.brand-head { max-width: 62ch; margin-bottom: clamp(20px, 3vh, 32px); }
+.brand-kicker { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--acid); }
+.brand-head h3 {
   font-family: var(--display);
   font-weight: 750;
-  font-size: clamp(1.3rem, 2.4vw, 2rem);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: var(--bone);
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  line-height: 1.1;
+  margin: 10px 0 8px;
 }
-.reel-stat-label {
-  font-size: 0.6rem;
-  letter-spacing: 0.14em;
-  color: rgba(var(--bone-rgb), 0.5);
-}
-/* awaiting real figures: the dash is deliberately quiet so a missing number
-   reads as outstanding rather than as a result */
-.reel-stat.is-pending .reel-stat-val { color: rgba(var(--bone-rgb), 0.25); }
+.brand-head p { color: var(--dim); font-size: 0.98rem; line-height: 1.5; }
+/* three small groups, each under a numbered label */
+.brand-group { margin-top: clamp(30px, 5vh, 52px); }
+.brand-label { display: flex; align-items: baseline; gap: 12px; padding-bottom: 10px; margin-bottom: 18px; border-bottom: 1px solid var(--hairline); }
+.brand-label .mono { font-size: 0.68rem; letter-spacing: 0.14em; color: var(--acid); }
+.brand-label h4 { font-family: var(--display); font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; }
+.brand-note { color: var(--dim); font-size: 0.92rem; line-height: 1.5; margin: -6px 0 16px; max-width: 60ch; }
+.brand-tag { display: block; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-bottom: 14px; }
 
-/* dots */
-.reel-dots { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
-.reel-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  border: 0; padding: 0; cursor: pointer;
-  background: rgba(var(--bone-rgb), 0.25);
-  transition: background 0.25s ease, transform 0.25s ease;
+/* 01: the old pair, an arrow, then the new hand fanned out */
+.brand-compare {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) auto minmax(0, 6fr);
+  gap: clamp(14px, 3vw, 40px);
+  align-items: center;
 }
-.reel-dot.is-active { background: var(--acid); transform: scale(1.3); }
+.brand-arrow { font-size: 1.6rem; color: var(--acid); }
+.brand-old { position: relative; aspect-ratio: 1.3; }
+.brand-old .brand-tile { position: absolute; width: 78%; }
+.brand-old .brand-tile:nth-child(1) { left: 0; top: 0; transform: rotate(-4deg); }
+.brand-old .brand-tile:nth-child(2) { right: 0; bottom: 0; transform: rotate(3deg); z-index: 1; }
+.brand-old .brand-tile:hover,
+.brand-old .brand-tile:focus-visible { transform: translateY(-10px) rotate(0deg) scale(1.03); z-index: 5; }
+.brand-cards { position: relative; aspect-ratio: 1.15; }
+.brand-cards .brand-tile {
+  position: absolute;
+  width: 64%;
+  left: calc(var(--i) * 8.5%);
+  top: calc(var(--i) * 11%);
+  transform: rotate(var(--r));
+  z-index: var(--i);
+}
+.brand-cards .brand-tile:nth-child(1) { --i: 0; --r: -7deg; }
+.brand-cards .brand-tile:nth-child(2) { --i: 1; --r: -3deg; }
+.brand-cards .brand-tile:nth-child(3) { --i: 2; --r: 1deg; }
+.brand-cards .brand-tile:nth-child(4) { --i: 3; --r: 4deg; }
+.brand-cards .brand-tile:nth-child(5) { --i: 4; --r: 7deg; }
+/* the card under the pointer comes to the top of the hand */
+.brand-cards .brand-tile:hover,
+.brand-cards .brand-tile:focus-visible { transform: translateY(-14px) rotate(0deg) scale(1.03); z-index: 10; }
+.brand-tile {
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+  cursor: zoom-in;
+  box-shadow: 0 18px 40px -26px rgba(0, 0, 0, 0.5);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+.brand-tile:hover, .brand-tile:focus-visible { transform: translateY(-3px); box-shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.65); }
+.brand-tile img { display: block; width: 100%; height: auto; }
+.brand-tile.tall img { aspect-ratio: 3 / 4; object-fit: cover; }
+/* product shots on white keep their whole shape */
+.brand-tile.light { background: #fff; }
+.brand-tile.light img { object-fit: contain; }
+/* background-removed photos get room to breathe inside their white tile */
+.brand-tile.cutout { padding: 8%; }
+.brand-stickers .brand-tile.cutout img { height: 100%; }
+.brand-tile.glove-print { background: #1d63c9; padding: 14%; }
 
-/* ---- mobile reel: flip to width-driven cards ----
-   On desktop cards are height-driven (shared height, aspect sets width). That
-   breaks on phones: a 16:9 card at 520px tall is ~924px wide and bleeds off
-   both edges. Here we constrain WIDTH instead and let aspect-ratio set the
-   height, so both formats always fit the screen. The stage is as tall as the
-   tallest (9:16) card; wide cards centre vertically inside it. */
+/* 02: shirt, shirt worn, gloves, then the glove close-up over its print */
+.brand-gear { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: stretch; }
+.brand-stack { display: grid; grid-template-rows: auto 1fr; gap: 14px; }
+.brand-stack .glove-print { display: flex; align-items: center; }
+
+/* 03: the printed pack large, the designs beside it */
+.brand-stickers { display: grid; grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.brand-stickers .brand-tile { aspect-ratio: 1; }
+.brand-stickers img { width: 100%; height: 100%; object-fit: cover; }
+/* the pack fills the full height of the two rows beside it */
+.brand-stickers .pack { grid-row: span 2; align-self: stretch; aspect-ratio: auto; }
+.brand-stickers .pack { position: relative; }
+.brand-stickers .pack img { position: absolute; inset: 0; object-fit: contain; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* no drift: the strip becomes a row you scroll yourself */
+  .reel { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .reel-track { padding: 0 clamp(20px, 6vw, 90px); }
+  .reel-card, .brand-tile, .reel-modal[open] { transition: none; animation: none; }
+}
+
 @media (max-width: 820px) {
-  .reel {
-    /* stage height = the tall card's height (its width × 16/9) */
-    --reel-card-w: min(58vw, 230px);
-    --reel-h: calc(var(--reel-card-w) * 16 / 9);
-    padding: 8px 0 4px;
-  }
-
-  .reel-card {
-    height: auto;
-    border-radius: 14px;
-  }
-  .reel-card.tall { width: var(--reel-card-w); }
-  .reel-card.wide { width: min(86vw, 340px); }
-
-  .reel-nav {
-    width: 40px; height: 40px; font-size: 17px;
-    border-width: 1.5px;
-  }
-  .reel-nav.prev { left: 4px; }
-  .reel-nav.next { right: 4px; }
-
-  /* "MY RECENT WORKS" on one line. It already fits the 335px measure at the
-     mobile title size (323px), it was only breaking because wrapping was
-     allowed. Scoped to this one title rather than .scene-title generally,
-     since "BEHIND THE SCENES" is longer and would overflow with nowrap on.
-     The floor drops to 1.5rem so it still fits a 320px-wide phone, where the
-     shared 1.9rem minimum would spill once wrapping is off. */
+  .reel { --reel-h: 136px; --reel-gap: 12px; }
+  /* "MY RECENT WORKS" on one line, which fits once wrapping is off */
   #scene-reel .scene-title {
     white-space: nowrap;
     font-size: clamp(1.5rem, 8.4vw, 2.6rem);
   }
-
-  /* One row, not a 2x2 block: four stacked cells cost real height on a phone,
-     and this section already has to fit the stage, caption, stats and dots.
-     Only the first two fields survive (VIEWS and LINK CLICKS, ordered for this
-     in STAT_FIELDS): reach, then the metric these campaigns were judged on. */
-  .reel-stats { grid-template-columns: repeat(2, 1fr); }
-  .reel-stat:nth-child(n + 3) { display: none; }
-  .reel-stat-val { font-size: 1.45rem; }
-  .reel-stat-label { font-size: 0.55rem; letter-spacing: 0.1em; }
-  .reel-mute { width: 32px; height: 32px; top: 10px; right: 10px; }
-  .reel-mute svg { width: 15px; height: 15px; }
-
-  .reel-caption {
-    flex-direction: column; gap: 10px;
-    margin-top: 14px; padding: 0 20px;
-  }
-  .reel-dots { margin-top: 14px; gap: 8px; }
+  .brand-compare { grid-template-columns: 1fr; }
+  .brand-arrow { transform: rotate(90deg); justify-self: center; }
+  .brand-cards { aspect-ratio: 1.1; }
+  .brand-gear { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .brand-stickers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .brand-stickers .pack { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 1; }
+  .reel-modal-close { top: -46px; }
+  .reel-modal-media video.tall { height: 72vh; }
 }
 
 /* ===== SCENE 03 : CASE STUDIES (horizontal carousel) =====

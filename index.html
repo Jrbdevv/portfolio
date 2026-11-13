@@ -216,31 +216,135 @@
       </div>
     </section>
 
-    <!-- ===== SCENE 04 : MY RECENT WORKS (3D coverflow carousel) ===== -->
+    <!-- ===== SCENE 04 : MY RECENT WORKS (panning strip + viewer) ===== -->
     <!--
       ▶ EDIT THE REEL: cards are built by JS from the REEL_CLIPS list in
-      js/main.js, add/remove/reorder clips there. Each entry is
-      { src, aspect: "tall"|"wide", tag, href, stats }. Drop new .mp4s in /assets.
-      Per-clip numbers live in that same list.
+      js/main.js, where clips, order, links and measured stats live.
     -->
     <section class="scene footage-scene" id="scene-reel" data-scene="SCENE 04 · MY RECENT WORKS">
       <div class="footage-head">
         <h2 class="scene-title"><span class="mono scene-num">04</span> MY RECENT WORKS</h2>
       </div>
-      <p class="work-sub">Launch video for the products and pages above, measured by the
-         traffic each clip sent to them.</p>
+      <p class="work-sub">Launch films, ads and product reveals for the products and pages above.
+         Pick any clip to watch it full screen with sound.</p>
       <div class="reel" id="reel">
-        <button class="reel-nav prev" id="reel-prev" aria-label="Previous clip" data-cursor="PREV">‹</button>
-        <div class="reel-viewport">
-          <div class="reel-stage" id="reel-stage" aria-roledescription="carousel"></div>
-        </div>
-        <button class="reel-nav next" id="reel-next" aria-label="Next clip" data-cursor="NEXT">›</button>
+        <div class="reel-track" role="list" aria-label="Recent video work"></div>
+        <div class="reel-track is-reverse" role="list" aria-label="More video work"></div>
       </div>
-      <div class="reel-caption mono" id="reel-caption"></div>
-      <!-- the active clip's numbers, so the performance sits with the work
-           rather than in a section of its own. Built by JS from REEL_CLIPS. -->
-      <div class="reel-stats" id="reel-stats" aria-live="polite"></div>
-      <div class="reel-dots" id="reel-dots"></div>
+
+      <!-- branding: each tile opens full size in the viewer below -->
+      <div class="brand-wall">
+        <div class="brand-head">
+          <span class="mono brand-kicker">Branding &amp; merchandise</span>
+          <h3>Own Your Power, off the screen.</h3>
+          <p>The print and merch I designed for BigBattery: the "Own Your Power" shirt,
+             high-voltage work gloves, a business card redesign and the stickers that ship
+             in every order. Contact details are blurred.</p>
+        </div>
+
+        <!-- 01: the card redesign, old pair beside the new hand -->
+        <div class="brand-group">
+          <div class="brand-label"><span class="mono">01</span><h4>Business cards, before and after</h4></div>
+          <div class="brand-compare">
+            <div class="brand-side">
+              <span class="mono brand-tag">Before · "Your Source For Power"</span>
+              <div class="brand-old">
+                <button class="brand-tile" type="button" data-caption="BEFORE · THE OLD CARD, FRONT">
+                  <img src="assets/merch-card-old-front.webp" width="1250" height="712" loading="lazy" alt="The old BigBattery business card front: a white card with the logo and the tagline Your Source For Power">
+                </button>
+                <button class="brand-tile" type="button" data-caption="BEFORE · THE OLD CARD, BACK">
+                  <img src="assets/merch-card-old-back.webp" width="1250" height="722" loading="lazy" alt="The old BigBattery business card back for Bruce Taylor, Corporate Sales, on a black and white split layout, contact details blurred">
+                </button>
+              </div>
+            </div>
+            <span class="brand-arrow" aria-hidden="true">→</span>
+            <div class="brand-side">
+              <span class="mono brand-tag">After · "Own Your Power"</span>
+              <div class="brand-cards">
+                <button class="brand-tile" type="button" data-caption="AFTER · B2B BUSINESS CARD">
+                  <img src="assets/merch-card-1.webp" width="1250" height="732" loading="lazy" alt="BigBattery business card for Damon Kilgo, Business Account Manager, contact details blurred">
+                </button>
+                <button class="brand-tile" type="button" data-caption="AFTER · B2B BUSINESS CARD">
+                  <img src="assets/merch-card-2.webp" width="1250" height="732" loading="lazy" alt="BigBattery business card for Francisco Sevilla, Regional Business Account Manager for Latin America, contact details blurred">
+                </button>
+                <button class="brand-tile" type="button" data-caption="AFTER · B2B BUSINESS CARD">
+                  <img src="assets/merch-card-3.webp" width="1250" height="732" loading="lazy" alt="BigBattery business card for James Sutton, Business Account Manager, contact details blurred">
+                </button>
+                <button class="brand-tile" type="button" data-caption="AFTER · B2B BUSINESS CARD">
+                  <img src="assets/merch-card-4.webp" width="1250" height="732" loading="lazy" alt="BigBattery business card for Kyle Moss, Business Account Manager, contact details blurred">
+                </button>
+                <button class="brand-tile" type="button" data-caption="AFTER · B2B BUSINESS CARD">
+                  <img src="assets/merch-card-5.webp" width="1250" height="732" loading="lazy" alt="BigBattery business card for Weston Fields, Business Account Manager, contact details blurred">
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 02: what the crew wears -->
+        <div class="brand-group">
+          <div class="brand-label"><span class="mono">02</span><h4>Apparel and gear</h4></div>
+          <div class="brand-gear">
+            <button class="brand-tile tall" type="button" data-caption="OWN YOUR POWER · SHIRT PRINT">
+              <img src="assets/merch-shirt.webp" width="426" height="552" loading="lazy"
+                   alt="Own Your Power shirt print: graffiti lettering under a crowned BigBattery cube, with a lightning bolt, sun and solar panel">
+            </button>
+            <button class="brand-tile tall" type="button" data-caption="OWN YOUR POWER · ON THE INSTALL CREW">
+              <img src="assets/merch-shirt-worn.webp" width="1000" height="1333" loading="lazy"
+                   alt="An installer wearing the Own Your Power shirt while mounting a RAIO gateway">
+            </button>
+            <button class="brand-tile tall light" type="button" data-caption="HIGH-VOLTAGE WORK GLOVES">
+              <img src="assets/merch-gloves-pair.webp" width="1100" height="1660" loading="lazy"
+                   alt="Blue BigBattery high-voltage work gloves with black grip palms, printed with the logo, Own Your Power, a voltage rating and a US flag">
+            </button>
+            <div class="brand-stack">
+              <button class="brand-tile light cutout" type="button" data-caption="HIGH-VOLTAGE WORK GLOVES · THE REAL PAIR">
+                <img src="assets/merch-gloves-real.webp" width="966" height="882" loading="lazy"
+                     alt="The printed BigBattery work gloves: blue with black grip palms, the logo, Own Your Power and a 1000V AC / 1500V DC rating">
+              </button>
+              <button class="brand-tile glove-print" type="button" data-caption="GLOVE PRINT ARTWORK">
+                <img src="assets/merch-gloves-print.webp" width="1169" height="566" loading="lazy"
+                     alt="The glove print artwork: the BigBattery wordmark over a high-voltage warning symbol and a US flag">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 03: the stickers in every box -->
+        <div class="brand-group">
+          <div class="brand-label"><span class="mono">03</span><h4>Stickers in every order</h4></div>
+          <p class="brand-note">Packed into every purchase, so customers have something to show off
+             about who they bought from.</p>
+          <div class="brand-stickers">
+            <button class="brand-tile pack light" type="button" data-caption="THE STICKER PACK">
+              <img src="assets/merch-stickers.webp" width="1000" height="1000" loading="lazy"
+                   alt="The printed BigBattery sticker pack: Got Lithium?, Powered By Lithium, Lead Is Dead and Lithium Powered">
+            </button>
+            <button class="brand-tile" type="button" data-caption="STICKER · LEAD IS DEAD">
+              <img src="assets/merch-sticker-lead.webp" width="638" height="638" loading="lazy"
+                   alt="Lead Is Dead sticker: two figures smashing a lead-acid battery, Powered By Lithium">
+            </button>
+            <button class="brand-tile" type="button" data-caption="STICKER · LITHIUM POWERED">
+              <img src="assets/merch-sticker-lithium.webp" width="638" height="638" loading="lazy"
+                   alt="Lithium Powered sticker: glowing lettering over the BigBattery cube on black">
+            </button>
+            <button class="brand-tile" type="button" data-caption="STICKER · POWERED BY LITHIUM">
+              <img src="assets/merch-sticker-cart.webp" width="638" height="638" loading="lazy"
+                   alt="Powered By Lithium sticker: a cowboy kicking up mud in a golf cart">
+            </button>
+            <button class="brand-tile light cutout" type="button" data-caption="THE SWAGBAG, WITH THE GLOVES INSIDE">
+              <img src="assets/merch-swagbag-bag.webp" width="728" height="1100" loading="lazy"
+                   alt="A clear BigBattery SWAGBAG with the work gloves inside and the SWAGBAG label on the front">
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <dialog class="reel-modal" id="reel-modal" aria-label="Media viewer">
+        <button class="reel-modal-close" type="button" aria-label="Close">×</button>
+        <div class="reel-modal-media"></div>
+        <div class="reel-modal-meta mono"></div>
+      </dialog>
     </section>
 
     <!-- ===== SCENE 05 : ABOUT ===== -->

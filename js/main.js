@@ -403,286 +403,199 @@ function enableDragScroll(track) {
 /* Case Studies stays a drag carousel; MY RECENT WORKS is now a marquee (below) */
 enableDragScroll(document.getElementById("work-track"));
 
-/* ---------- MY RECENT WORKS: 3D coverflow carousel ----------
-   focused centre clip with neighbours fanned back in perspective; auto-advances
-   every ADVANCE_MS and plays only the centre clip (muted by default). */
+/* ---------- MY RECENT WORKS: a panning strip of looping clips ----------
+   The strip drifts left to right on its own and pauses under the pointer. Each
+   card plays a short silent preview (assets/reel-prev-*.mp4); the expand button
+   opens the full clip, with sound, in a dimmed viewer. */
 
-/* minimal stroke-based speaker glyphs (currentColor), swapped in place of
-   emoji, which read as gimmicky against the site's thin-line HUD language */
-const ICON_MUTED = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-  stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-  <path d="M10.5 7.5 6 11H3v6h3l4.5 3.5v-13Z"/>
-  <line x1="16" y1="10" x2="21.5" y2="15.5"/>
-  <line x1="21.5" y1="10" x2="16" y2="15.5"/>
-</svg>`;
-const ICON_SOUND = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-  stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-  <path d="M10.5 7.5 6 11H3v6h3l4.5 3.5v-13Z"/>
-  <path d="M16.5 9.5a5 5 0 0 1 0 7"/>
-  <path d="M19.3 7a9 9 0 0 1 0 12.2"/>
-</svg>`;
-
-/* ---------- the reel ----------
-   ▶ STATS: each clip carries its own numbers, shown under the carousel and
-   swapped as the clip changes.
-     views    total plays
-     viewers  unique accounts reached
-     clicks   link clicks, the goal metric for these campaigns
-     landing  landing page views, i.e. arrivals that actually rendered
-   Clips 1 and 5 are MEASURED figures pulled straight from the campaign
-   reports. The other five are interpolated inside that reported range
-   (views 7,613-13,390 / viewers 4,881-10,372 / clicks 301-543, with landing
-   held at clip 1's real 77% of clicks) and should be replaced with each
-   clip's own report when convenient. Anything left as "" renders as a dash.
-   ▶ ORDER: rearranging this list rearranges the carousel; tags, links and stats
-   travel with their clip. */
+/* ▶ EDIT THE REEL: add, remove or reorder clips here. Each clip needs its full
+   file in /assets plus a preview (reel-prev-NAME.mp4) and a poster
+   (NAME-poster.webp). `href` and `stats` are optional.
+   ▶ STATS: only MEASURED campaign figures are listed. The five clips that used
+   to show numbers interpolated inside the reported range no longer show any;
+   add each clip's own report figures here when you have them.
+     views    total plays           clicks   link clicks
+     viewers  unique accounts       landing  landing page views */
 const REEL_CLIPS = [
-  { src: "assets/ad-from7.mp4",       aspect: "wide", tag: "BROADCAST AD",     href: "projects/bigbattery.html",
-    /* MEASURED, from the campaign report: 7-day boost, goal "get more website
-       visitors". Ad spend deliberately not shown. */
-    stats: { views: "7,613",  viewers: "4,881",  clicks: "301", landing: "233" } },
-  { src: "assets/nexus.mp4",          aspect: "tall", tag: "ORGANIC REEL",     href: "projects/nexus-line.html",
-    stats: { views: "9,240",  viewers: "6,410",  clicks: "372", landing: "288" } },
-  { src: "assets/ethos-hypershot.mp4",aspect: "tall", tag: "HYPERSHOT",        href: "projects/nexus-line.html#creative",
-    stats: { views: "11,905", viewers: "8,730",  clicks: "468", landing: "362" } },
-  { src: "assets/ahc.mp4",            aspect: "tall", tag: "LAUNCH TEASER",    href: "projects/nexus-line.html#creative",
-    stats: { views: "8,470",  viewers: "5,660",  clicks: "334", landing: "259" } },
-  { src: "assets/portfolio-reel.mp4", aspect: "tall", tag: "PORTFOLIO REEL",   href: "projects/nexus-line.html#creative",
+  { src: "assets/ad-from7.mp4",        aspect: "wide", tag: "BROADCAST AD",     href: "projects/bigbattery.html",
+    /* MEASURED: 7-day boost, goal "get more website visitors". Spend not shown. */
+    stats: { views: "7,613", viewers: "4,881", clicks: "301", landing: "233" } },
+  { src: "assets/raio-film.mp4",       aspect: "wide", tag: "RAIO LAUNCH FILM", href: "projects/nexus-line.html#raio" },
+  { src: "assets/nexus.mp4",           aspect: "tall", tag: "ORGANIC REEL",     href: "projects/nexus-line.html" },
+  { src: "assets/raio-day-night.mp4",  aspect: "wide", tag: "RAIO ENERGY FLOW", href: "projects/nexus-line.html#raio" },
+  { src: "assets/ethos-hypershot.mp4", aspect: "tall", tag: "HYPERSHOT" },
+  { src: "assets/bf-golf.mp4",         aspect: "wide", tag: "BLACK FRIDAY SPOT" },
+  { src: "assets/portfolio-reel.mp4",  aspect: "tall", tag: "PORTFOLIO REEL",
     /* MEASURED, top of the reported range */
     stats: { views: "13,390", viewers: "10,372", clicks: "543", landing: "420" } },
-  { src: "assets/ethos-ad.mp4",       aspect: "wide", tag: "COMMERCIAL SPOT",  href: "projects/nexus-line.html#creative",
-    stats: { views: "10,180", viewers: "7,240",  clicks: "412", landing: "319" } },
-  { src: "assets/solar.mp4",          aspect: "wide", tag: "AD CAMPAIGN",      href: "projects/nexus-line.html#creative",
-    stats: { views: "12,460", viewers: "9,115",  clicks: "501", landing: "388" } },
+  { src: "assets/raio-reveal.mp4",     aspect: "wide", tag: "RAIO REVEAL",      href: "projects/nexus-line.html#raio" },
+  { src: "assets/ethos-ad.mp4",        aspect: "wide", tag: "COMMERCIAL SPOT" },
+  { src: "assets/ahc.mp4",             aspect: "tall", tag: "LAUNCH TEASER" },
+  { src: "assets/solar.mp4",           aspect: "wide", tag: "AD CAMPAIGN" },
 ];
 
-(() => {
-  const stage = document.getElementById("reel-stage");
-  const caption = document.getElementById("reel-caption");
-  const dotsWrap = document.getElementById("reel-dots");
-  const statsWrap = document.getElementById("reel-stats");
-  const reel = document.getElementById("reel");
-  if (!stage) return;
+/* the second lane, which pans the other way */
+const REEL_CLIPS_2 = [
+  { src: "assets/reel-goldilocks.mp4", aspect: "wide", tag: "NEXUS 2 · JUST RIGHT", href: "projects/nexus-line.html" },
+  { src: "assets/reel-sale-promo.mp4", aspect: "tall", tag: "SALE PROMO" },
+  { src: "assets/reel-alien.mp4",      aspect: "wide", tag: "ALIEN SPOT" },
+  { src: "assets/reel-eagle2.mp4",     aspect: "wide", tag: "EAGLE 2 PROMO" },
+  { src: "assets/reel-liftloop.mp4",   aspect: "tall", tag: "APP PROMO" },
+  { src: "assets/reel-lizard.mp4",     aspect: "wide", tag: "LIZARD SPOT" },
+  { src: "assets/reel-fishing.mp4",    aspect: "wide", tag: "MARINE SPOT" },
+];
 
-  /* 7s per clip: long enough to register the cut and the audio, short enough
-     that seven clips are not a commitment. Hovering suspends it entirely so a
-     clip plays out (see `hovered`). */
-  const ADVANCE_MS = 7000;
-  const N = REEL_CLIPS.length;
-  let active = 0;
-  /* muted by default: sound is opt-in through the speaker button, and the
-     choice then persists across advances. Nothing unmutes on its own. */
-  let muted = true;
-  let userMuted = false;   // set only by the toggle, so we never fight a choice
-  let unlockArmed = false;
-  let timer = null;
-  let hovered = false;
-  let onScreen = false;
+const ICON_EXPAND = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+  stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+  <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
+</svg>`;
 
-  // build cards + dots
-  const cards = REEL_CLIPS.map((clip, i) => {
-    const card = document.createElement("article");
-    card.className = "reel-card " + (clip.aspect === "wide" ? "wide" : "tall");
-    card.innerHTML =
-      `<video src="${clip.src}" muted loop playsinline preload="${i < 2 ? "auto" : "none"}"></video>` +
-      `<button class="reel-mute" aria-label="Toggle sound">${ICON_MUTED}</button>`;
-    card.querySelector("video").addEventListener("error", () => {}, { once: true });
-    card.addEventListener("click", (e) => {
-      if (e.target.closest(".reel-mute")) return;
-      if (i === active) window.location.href = clip.href;   // active card → case study
-      else go(i);                                            // side card → focus it
-    });
-    card.querySelector(".reel-mute").addEventListener("click", (e) => {
-      e.stopPropagation();
-      muted = !muted;
-      userMuted = muted;
-      applyMute();
-    });
-    stage.appendChild(card);
-
-    const dot = document.createElement("button");
-    dot.className = "reel-dot";
-    dot.setAttribute("aria-label", `Go to clip ${i + 1}`);
-    dot.addEventListener("click", () => go(i));
-    dotsWrap.appendChild(dot);
-    return card;
-  });
-  const dots = [...dotsWrap.children];
-
-  /* One row of figures per clip, so the numbers live with the work instead of
-     being stranded in a separate section. An empty value renders as a dash
-     rather than being dropped, which keeps the four columns from reflowing as
-     the carousel advances. */
-  /* Order is deliberate: the first two are the pair that leads on mobile, where
-     only two fit on one row (see the max-width:720px block). Reach first, then
-     the goal metric these campaigns were actually judged on. */
+/* the viewer: one <dialog> shared by the reel's clips and the branding images */
+const viewer = (() => {
+  const modal = document.getElementById("reel-modal");
+  if (!modal) return null;
+  const media = modal.querySelector(".reel-modal-media");
+  const meta = modal.querySelector(".reel-modal-meta");
   const STAT_FIELDS = [
     { key: "views",   label: "VIEWS" },
     { key: "clicks",  label: "LINK CLICKS" },
     { key: "viewers", label: "VIEWERS" },
     { key: "landing", label: "SITE VISITS" },
   ];
-  function renderStats(stats) {
-    if (!statsWrap) return;
-    statsWrap.innerHTML = STAT_FIELDS.map(({ key, label }) => {
-      const raw = (stats && stats[key]) || "";
-      const value = raw === "" ? "&mdash;" : raw;
-      const pending = raw === "" ? " is-pending" : "";
-      return `<div class="reel-stat${pending}">` +
-        `<span class="reel-stat-val">${value}</span>` +
-        `<span class="mono reel-stat-label">${label}</span>` +
-        `</div>`;
-    }).join("");
-  }
+  const listeners = new Set();
+  const close = () => { if (modal.open) modal.close(); };
 
-  function applyMute() {
-    const v = cards[active].querySelector("video");
-    v.muted = muted;
-    const btn = cards[active].querySelector(".reel-mute");
-    btn.innerHTML = muted ? ICON_MUTED : ICON_SOUND;
-    btn.setAttribute("aria-label", muted ? "Turn sound on" : "Turn sound off");
-    btn.classList.toggle("is-live", !muted);
-    if (!muted) playActive();
-  }
-
-  /* Play the centre clip, honouring the sound preference. A scroll is not a
-     user gesture as far as autoplay policy is concerned, so an audible play()
-     can be rejected on a fresh load. When that happens we fall back to muted so
-     the clip still runs, and arm a one-shot listener that goes audible on the
-     reader's first real interaction, unless they muted it themselves. */
-  function playActive() {
-    const v = cards[active].querySelector("video");
-    v.muted = muted;
-    const p = v.play();
-    if (!p || !p.catch) return;
-    p.catch(() => {
-      if (muted) return;
-      muted = true;
-      applyMute();
-      armAudioUnlock();
-    });
-  }
-
-  function armAudioUnlock() {
-    if (unlockArmed || userMuted) return;
-    unlockArmed = true;
-    const unlock = () => {
-      document.removeEventListener("pointerdown", unlock);
-      document.removeEventListener("keydown", unlock);
-      unlockArmed = false;
-      if (userMuted || !onScreen) return;
-      muted = false;
-      applyMute();
-    };
-    document.addEventListener("pointerdown", unlock, { once: true });
-    document.addEventListener("keydown", unlock, { once: true });
-  }
-
-  function layout() {
-    const H = stage.offsetHeight || 460;
-    // mobile: cards are width-driven (so 16:9 clips can't overflow the screen)
-    // and therefore vary in height, so space them off viewport width and show
-    // only one neighbour per side to keep the stage readable.
-    const isMobile = window.innerWidth <= 820;
-    const spacing = isMobile
-      ? window.innerWidth * 0.34
-      : Math.min(H * 0.52, window.innerWidth * 0.26);
-    const maxVisible = isMobile ? 1 : 2;
-    cards.forEach((card, i) => {
-      let off = i - active;
-      if (off > N / 2) off -= N;
-      if (off < -N / 2) off += N;
-      const a = Math.abs(off);
-      if (a > maxVisible) {
-        card.style.opacity = "0";
-        /* NOTE: deliberately no inline pointer-events here. CSS already does
-           `.reel-card:not(.is-active) { pointer-events: none }`, and an inline
-           value would outrank it permanently: a card that once rotated out of
-           range stayed unclickable even after becoming the centre card, which
-           silently killed its mute button. */
-        card.style.transform = `translate(-50%, -50%) scale(0.5)`;
-        card.classList.remove("is-active");
-        return;
-      }
-      const x = off * spacing;
-      const z = -a * 150;
-      const ry = -off * 34;
-      const s = 1 - a * 0.16;
-      // translateY(-50%) pairs with CSS `top: 50%` so cards of differing
-      // heights stay vertically centred in the stage (mobile), and it's a
-      // no-op visually on desktop where every card shares one height.
-      card.style.transform =
-        `translate(calc(-50% + ${x}px), -50%) translateZ(${z}px) rotateY(${ry}deg) scale(${s})`;
-      card.style.filter = a === 0 ? "none" : `blur(${a * 2.2}px) brightness(0.8)`;
-      card.style.opacity = a === 0 ? "1" : a === 1 ? "0.9" : "0.5";
-      card.style.zIndex = String(30 - a);
-      card.classList.toggle("is-active", a === 0);
-    });
-
-    // play only the centre; rewind + pause the rest
-    cards.forEach((card, i) => {
-      const v = card.querySelector("video");
-      if (i === active) {
-        if (v.preload !== "auto") v.preload = "auto";
-        playActive();
-      } else {
-        v.pause();
-        try { v.currentTime = 0; } catch (_) {}
-      }
-    });
-
-    // caption + dots reflect the active clip
-    const clip = REEL_CLIPS[active];
-    caption.innerHTML =
-      `<span class="footage-tag">${clip.tag}</span>` +
-      `<a class="footage-cta" href="${clip.href}" data-cursor="READ">READ THE CASE STUDY →</a>`;
-    renderStats(clip.stats);
-    dots.forEach((d, i) => d.classList.toggle("is-active", i === active));
-    applyMute();
-  }
-
-  function go(i) {
-    active = (i % N + N) % N;
-    /* unmute persists across advances (don't reset to muted here) */
-    layout();
-    restart();
-  }
-  const next = () => go(active + 1);
-  const prev = () => go(active - 1);
-
-  function restart() {
-    clearInterval(timer);
-    if (reduceMotion) return;
-    /* always rotates every ADVANCE_MS, muted or not. Only hover and
-       being off-screen pause it. unmute still persists across advances
-       (see go()), it just no longer blocks the timer. */
-    timer = setInterval(() => {
-      if (!hovered && onScreen) next();
-    }, ADVANCE_MS);
-  }
-
-  document.getElementById("reel-next").addEventListener("click", next);
-  document.getElementById("reel-prev").addEventListener("click", prev);
-  reel.addEventListener("mouseenter", () => { hovered = true; });
-  reel.addEventListener("mouseleave", () => { hovered = false; });
-  window.addEventListener("resize", layout);
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) cards.forEach((c) => c.querySelector("video").pause());
-    else if (onScreen) layout();
+  modal.querySelector(".reel-modal-close").addEventListener("click", close);
+  /* a click on the dimmed backdrop lands on the dialog itself */
+  modal.addEventListener("click", (e) => { if (e.target === modal) close(); });
+  modal.addEventListener("close", () => {
+    const v = media.querySelector("video");
+    if (v) { v.pause(); v.removeAttribute("src"); v.load(); }
+    media.innerHTML = "";
+    listeners.forEach((fn) => fn(false));
   });
 
-  // only run the reel while the section is on screen
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver((ents) => {
-      onScreen = ents[0].isIntersecting;
-      if (onScreen) { layout(); restart(); }
-      else { clearInterval(timer); cards.forEach((c) => c.querySelector("video").pause()); }
-    }, { threshold: 0.3 }).observe(reel);
-  } else { onScreen = true; }
+  function show(html, metaHtml) {
+    media.innerHTML = html;
+    meta.innerHTML = metaHtml;
+    modal.showModal();
+    listeners.forEach((fn) => fn(true));
+  }
 
-  layout();
-  restart();
+  return {
+    onToggle: (fn) => listeners.add(fn),
+    video(clip) {
+      const stats = clip.stats
+        ? `<div class="reel-modal-stats">${STAT_FIELDS.map(({ key, label }) =>
+            `<div><b>${clip.stats[key]}</b><span>${label}</span></div>`).join("")}</div>`
+        : "";
+      const link = clip.href ? `<a class="reel-modal-link" href="${clip.href}">READ THE CASE STUDY →</a>` : "";
+      show(
+        `<video class="${clip.aspect}" src="${clip.src}" poster="${clip.src.replace(".mp4", "-poster.webp")}"
+           controls playsinline autoplay></video>`,
+        `<span class="reel-modal-tag">${clip.tag}</span>${stats}${link}`
+      );
+      /* opened by a click, so sound is allowed; fall back to muted if the browser disagrees */
+      const v = media.querySelector("video");
+      v.muted = false;
+      const p = v.play();
+      if (p && p.catch) p.catch(() => { v.muted = true; v.play().catch(() => {}); });
+    },
+    image(src, alt, caption) {
+      show(`<img src="${src}" alt="${alt}">`, caption ? `<span class="reel-modal-tag">${caption}</span>` : "");
+    },
+  };
 })();
+
+(() => {
+  const reel = document.getElementById("reel");
+  const tracks = reel ? [...reel.querySelectorAll(".reel-track")] : [];
+  if (!tracks.length) return;
+
+  const SPEED_PX_S = 36;
+  const looping = !reduceMotion;
+  /* new clips are named reel-<name>.mp4, older ones <name>.mp4; both preview as reel-prev-<name>.mp4 */
+  const previewOf = (src) => `assets/reel-prev-${src.split("/").pop().replace(/^reel-/, "")}`;
+
+  const makeCard = (track, clip, copy) => {
+    const card = document.createElement("article");
+    card.className = `reel-card ${clip.aspect}`;
+    const preview = previewOf(clip.src);
+    const poster = clip.src.replace(".mp4", "-poster.webp");
+    card.innerHTML =
+      `<video src="${preview}" poster="${poster}" muted loop playsinline preload="none" aria-hidden="true"></video>` +
+      `<span class="reel-tag mono">${clip.tag}</span>` +
+      `<button class="reel-expand" type="button" aria-label="Play ${clip.tag.toLowerCase()} full screen with sound">${ICON_EXPAND}</button>`;
+    const open = () => viewer && viewer.video(clip);
+    card.addEventListener("click", open);
+    const btn = card.querySelector(".reel-expand");
+    btn.addEventListener("click", (e) => { e.stopPropagation(); open(); });
+    /* the second copy only exists so the loop never shows a gap */
+    if (copy) {
+      card.setAttribute("aria-hidden", "true");
+      btn.tabIndex = -1;
+    }
+    track.appendChild(card);
+  };
+  [REEL_CLIPS, REEL_CLIPS_2].forEach((clips, i) => {
+    const track = tracks[i];
+    if (!track) return;
+    clips.forEach((clip) => makeCard(track, clip, false));
+    if (looping) {
+      clips.forEach((clip) => makeCard(track, clip, true));
+      track.classList.add("is-looping");
+    }
+  });
+  const videos = [...reel.querySelectorAll("video")];
+
+  /* one pass of each lane at the same steady pace, whatever the screen size */
+  const pace = () => {
+    if (!looping) return;
+    tracks.forEach((track) => track.style.setProperty("--reel-dur", `${Math.round(track.scrollWidth / 2 / SPEED_PX_S)}s`));
+  };
+  pace();
+  window.addEventListener("resize", pace);
+
+  /* only clips actually in view are decoded */
+  let open = false;
+  const playIfAllowed = (v) => {
+    if (open || document.hidden) return;
+    if (v.preload !== "auto") v.preload = "auto";
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});
+  };
+  const visible = new Set();
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { visible.add(e.target); playIfAllowed(e.target); }
+      else { visible.delete(e.target); e.target.pause(); }
+    }), { rootMargin: "0px 10% 0px 10%" });
+    videos.forEach((v) => io.observe(v));
+    new IntersectionObserver(([e]) => reel.classList.toggle("is-offscreen", !e.isIntersecting)).observe(reel);
+  } else {
+    videos.forEach(playIfAllowed);
+  }
+
+  /* everything holds still while the viewer is open */
+  if (viewer) viewer.onToggle((isOpen) => {
+    open = isOpen;
+    reel.classList.toggle("is-paused", isOpen);
+    if (isOpen) videos.forEach((v) => v.pause());
+    else visible.forEach(playIfAllowed);
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) videos.forEach((v) => v.pause());
+    else visible.forEach(playIfAllowed);
+  });
+})();
+
+/* branding and merchandise: each tile opens full size in the same viewer */
+document.querySelectorAll(".brand-tile").forEach((tile) => {
+  tile.addEventListener("click", () => {
+    const img = tile.querySelector("img");
+    if (viewer) viewer.image(img.currentSrc || img.src, img.alt, tile.dataset.caption);
+  });
+});
 
 /* ---------- autoplay-on-view videos (Higgsfield-style, but resource-aware) ----------
    Each clip plays only while it's in the viewport and pauses when it leaves,
@@ -1036,8 +949,8 @@ if (window.gsap && !reduceMotion) {
     });
   });
 
-  /* reel coverflow: fade the whole stage in as it enters (the cards carry
-     their own 3D motion, so one container fade is enough) */
+  /* reel strip: fade it in as it enters (the cards carry their own motion,
+     so one container fade is enough) */
   gsap.from(".reel", {
     autoAlpha: 0, y: 30, duration: 1, ease: "power3.out",
     scrollTrigger: { trigger: ".reel", start: "top 82%" },

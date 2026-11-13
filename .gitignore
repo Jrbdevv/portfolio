@@ -62,3 +62,9 @@ assets/*
 !assets/creative-nexus2-bogo.webp
 !assets/creative-nexus2-sleek.webp
 !assets/creative-nexus2-grows.webp
+!assets/raio-*
+!assets/merch-*
+!assets/bf-golf*
+!assets/reel-prev-*
+!assets/*-poster.webp
+!assets/reel-*
