@@ -384,25 +384,25 @@
   --reel-h: clamp(150px, 21vh, 210px);
   --reel-gap: 16px;
   position: relative;
-  display: flex; flex-direction: column; gap: var(--reel-gap);
-  overflow: hidden;
-  padding: 14px 0;
+  display: flex; flex-direction: column;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
           mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
 }
-.reel-track { display: flex; width: max-content; }
-/* left to right: starts half a pass back and slides forward */
-.reel-track.is-looping { animation: reel-pan var(--reel-dur, 90s) linear infinite; }
-@keyframes reel-pan {
-  from { transform: translateX(-50%); }
-  to   { transform: translateX(0); }
+/* each lane is its own sideways scroller, so a phone can swipe it. js/main.js
+   advances the scroll a little every frame; scrolled content is drawn in
+   tiles, which keeps iPhone Safari from dropping a lane for being too wide
+   (an animated transform on a strip this long simply stops painting there) */
+.reel-lane {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  /* room above and below for the hover lift and the card shadow */
+  padding: 8px 0 18px;
 }
-.reel-track.is-reverse.is-looping { animation-direction: reverse; }
-/* only the lane under the pointer stops, so the other keeps moving */
-.reel-track:hover,
-.reel-track:focus-within,
-.reel.is-paused .reel-track,
-.reel.is-offscreen .reel-track { animation-play-state: paused; }
+.reel-lane::-webkit-scrollbar { display: none; }
+.reel-lane + .reel-lane { margin-top: calc(var(--reel-gap) - 26px); }
+.reel-track { display: flex; width: max-content; }
 
 /* a margin rather than a flex gap, so both copies measure the same */
 .reel-card {
@@ -441,29 +441,31 @@
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
 }
-.reel-expand {
-  position: absolute; top: 12px; right: 12px; z-index: 2;
-  width: 40px; height: 40px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  border: 2px solid var(--acid);
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--acid);
+/* the whole card is the button: invisible, but it takes the tap, the click and the focus */
+.reel-open {
+  position: absolute; inset: 0; z-index: 3;
+  padding: 0; border: 0;
+  background: transparent;
+  border-radius: inherit;
   cursor: pointer;
-  opacity: 0;
-  transform: scale(0.85);
-  transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease, color 0.2s ease;
 }
-.reel-expand:hover { background: var(--acid); color: #fff; }
-.reel-expand svg { display: block; pointer-events: none; }
+.reel-open:focus-visible { outline: 2px solid var(--acid); outline-offset: -2px; }
 .reel-card:hover::after, .reel-card:focus-within::after,
-.reel-card:hover .reel-tag, .reel-card:focus-within .reel-tag,
-.reel-card:hover .reel-expand, .reel-card:focus-within .reel-expand { opacity: 1; transform: none; }
-/* touch screens have no hover, so the controls are simply there */
+.reel-card:hover .reel-tag, .reel-card:focus-within .reel-tag { opacity: 1; transform: none; }
+/* touch screens have no hover, so the labels are simply there */
 @media (hover: none) {
-  .reel-card::after, .reel-tag, .reel-expand { opacity: 1; transform: none; }
-  .reel-expand { width: 36px; height: 36px; }
+  .reel-card::after, .reel-tag { opacity: 1; transform: none; }
+}
+.reel-hint {
+  margin: 4px auto 0;
+  padding: 0 20px;
+  text-align: center;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
 }
 
 /* ---- the viewer: the page dims and the clip plays large, with sound ---- */
@@ -615,8 +617,8 @@
 .brand-stickers .pack img { position: absolute; inset: 0; object-fit: contain; }
 
 @media (prefers-reduced-motion: reduce) {
-  /* no drift: the strip becomes a row you scroll yourself */
-  .reel { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  /* no drift: each lane is a row you swipe or scroll yourself */
+  .reel { -webkit-mask-image: none; mask-image: none; }
   .reel-track { padding: 0 clamp(20px, 6vw, 90px); }
   .reel-card, .brand-tile, .reel-modal[open] { transition: none; animation: none; }
 }
@@ -754,9 +756,10 @@
   color: rgba(var(--bone-rgb), 0.75);
   margin-bottom: clamp(32px, 5vh, 56px);
 }
+/* three across, so six products sit in two even rows */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(16px, 2vw, 28px);
 }
 .product-card { display: flex; flex-direction: column; color: inherit; text-decoration: none; }
@@ -783,6 +786,8 @@
   box-sizing: border-box;
   padding: 12%;
 }
+/* RAIO is shown with its gateway, a wider pair, so it gets less padding to read at the same size */
+.product-media.is-pair img { padding: 5%; }
 .product-placeholder {
   font-size: 0.6rem;
   letter-spacing: 0.14em;
@@ -797,7 +802,7 @@
   margin-bottom: 6px;
 }
 .product-detail { color: var(--dim); font-size: 0.95rem; }
-/* two-up once four cards would each drop below a legible width */
+/* two-up once three cards would each drop below a legible width */
 @media (max-width: 900px) {
   .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

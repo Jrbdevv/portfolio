@@ -445,11 +445,6 @@ const REEL_CLIPS_2 = [
   { src: "assets/reel-fishing.mp4",    aspect: "wide", tag: "MARINE SPOT" },
 ];
 
-const ICON_EXPAND = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-  stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-  <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
-</svg>`;
-
 /* the viewer: one <dialog> shared by the reel's clips and the branding images */
 const viewer = (() => {
   const modal = document.getElementById("reel-modal");
@@ -513,6 +508,7 @@ const viewer = (() => {
   if (!tracks.length) return;
 
   const SPEED_PX_S = 36;
+  const RESUME_MS = 2500;   // after a swipe or a scroll, a lane waits this long before drifting again
   const looping = !reduceMotion;
   /* new clips are named reel-<name>.mp4, older ones <name>.mp4; both preview as reel-prev-<name>.mp4 */
   const previewOf = (src) => `assets/reel-prev-${src.split("/").pop().replace(/^reel-/, "")}`;
@@ -520,16 +516,13 @@ const viewer = (() => {
   const makeCard = (track, clip, copy) => {
     const card = document.createElement("article");
     card.className = `reel-card ${clip.aspect}`;
-    const preview = previewOf(clip.src);
     const poster = clip.src.replace(".mp4", "-poster.webp");
     card.innerHTML =
-      `<video src="${preview}" poster="${poster}" muted loop playsinline preload="none" aria-hidden="true"></video>` +
+      `<video src="${previewOf(clip.src)}" poster="${poster}" muted loop playsinline preload="none" aria-hidden="true"></video>` +
       `<span class="reel-tag mono">${clip.tag}</span>` +
-      `<button class="reel-expand" type="button" aria-label="Play ${clip.tag.toLowerCase()} full screen with sound">${ICON_EXPAND}</button>`;
-    const open = () => viewer && viewer.video(clip);
-    card.addEventListener("click", open);
-    const btn = card.querySelector(".reel-expand");
-    btn.addEventListener("click", (e) => { e.stopPropagation(); open(); });
+      `<button class="reel-open" type="button" aria-label="Play ${clip.tag.toLowerCase()} full screen with sound"></button>`;
+    const btn = card.querySelector(".reel-open");
+    btn.addEventListener("click", () => viewer && viewer.video(clip));
     /* the second copy only exists so the loop never shows a gap */
     if (copy) {
       card.setAttribute("aria-hidden", "true");
@@ -541,23 +534,67 @@ const viewer = (() => {
     const track = tracks[i];
     if (!track) return;
     clips.forEach((clip) => makeCard(track, clip, false));
-    if (looping) {
-      clips.forEach((clip) => makeCard(track, clip, true));
-      track.classList.add("is-looping");
-    }
+    if (looping) clips.forEach((clip) => makeCard(track, clip, true));
   });
   const videos = [...reel.querySelectorAll("video")];
 
-  /* one pass of each lane at the same steady pace, whatever the screen size */
-  const pace = () => {
-    if (!looping) return;
-    tracks.forEach((track) => track.style.setProperty("--reel-dur", `${Math.round(track.scrollWidth / 2 / SPEED_PX_S)}s`));
-  };
-  pace();
-  window.addEventListener("resize", pace);
+  let open = false;
+  let onScreen = true;
+
+  /* the drift: each lane scrolls itself a little every frame. The first lane's
+     content travels left to right (its scroll position falls), the second the
+     other way. Both hold the clips twice, so jumping back by one copy's width
+     lands on identical frames and the loop never shows a seam. */
+  if (looping) {
+    const lanes = tracks.map((track, i) => ({
+      el: track.parentElement, track, dir: i === 0 ? -1 : 1,
+      half: 0, pos: 0, set: -1, hover: false, hold: 0,
+    }));
+    const measure = () => lanes.forEach((l) => {
+      const half = l.track.scrollWidth / 2;
+      l.pos = l.half ? (l.pos / l.half) * half : (l.dir < 0 ? half : 0);
+      l.half = half;
+    });
+    measure();
+    window.addEventListener("resize", measure);
+
+    lanes.forEach((l) => {
+      /* a scroll we didn't make is the visitor's: follow it, then wait before taking over again */
+      l.el.addEventListener("scroll", () => {
+        if (Math.abs(l.el.scrollLeft - l.set) <= 2) return;
+        l.pos = l.el.scrollLeft;
+        l.set = Math.round(l.pos);
+        l.hold = performance.now() + RESUME_MS;
+      }, { passive: true });
+      l.el.addEventListener("touchstart", () => { l.hold = Infinity; }, { passive: true });
+      l.el.addEventListener("touchend", () => { l.hold = performance.now() + RESUME_MS; }, { passive: true });
+      /* only the lane under the mouse, or holding keyboard focus, stops */
+      l.el.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") l.hover = true; });
+      l.el.addEventListener("pointerleave", () => { l.hover = false; });
+      l.el.addEventListener("focusin", () => { l.hover = true; });
+      l.el.addEventListener("focusout", () => { l.hover = false; });
+    });
+
+    let last = performance.now();
+    const tick = (now) => {
+      const dt = Math.min(64, now - last) / 1000;
+      last = now;
+      if (!open && onScreen && !document.hidden) {
+        lanes.forEach((l) => {
+          if (l.hover || now < l.hold || !l.half) return;
+          l.pos += l.dir * SPEED_PX_S * dt;
+          if (l.pos < 0) l.pos += l.half;
+          else if (l.pos >= l.half) l.pos -= l.half;
+          const px = Math.round(l.pos);
+          if (px !== l.set) { l.set = px; l.el.scrollLeft = px; }
+        });
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
 
   /* only clips actually in view are decoded */
-  let open = false;
   const playIfAllowed = (v) => {
     if (open || document.hidden) return;
     if (v.preload !== "auto") v.preload = "auto";
@@ -571,7 +608,7 @@ const viewer = (() => {
       else { visible.delete(e.target); e.target.pause(); }
     }), { rootMargin: "0px 10% 0px 10%" });
     videos.forEach((v) => io.observe(v));
-    new IntersectionObserver(([e]) => reel.classList.toggle("is-offscreen", !e.isIntersecting)).observe(reel);
+    new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; }).observe(reel);
   } else {
     videos.forEach(playIfAllowed);
   }
@@ -579,7 +616,6 @@ const viewer = (() => {
   /* everything holds still while the viewer is open */
   if (viewer) viewer.onToggle((isOpen) => {
     open = isOpen;
-    reel.classList.toggle("is-paused", isOpen);
     if (isOpen) videos.forEach((v) => v.pause());
     else visible.forEach(playIfAllowed);
   });
