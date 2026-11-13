@@ -1,7 +1,7 @@
 /* JB PORTFOLIO / blueprint.js (Case 02: drafting sheets, timeline scrub, product view, HUD contrast) */
 
 (() => {
-  const bands = [...document.querySelectorAll(".bp-band")];
+  const bands = [...document.querySelectorAll(".bp-band, .raio-band")];
   if (!bands.length) return;
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -25,6 +25,29 @@
     requestAnimationFrame(frame);
   };
 
+  /* RAIO stage specs: counts up from zero to the figure in the HTML, keeping its
+     decimal places, starting as its row slides in (the row's --d plus the CSS lead-in) */
+  const countNum = (el) => {
+    const raw = el.dataset.num;
+    const to = Number(raw);
+    const places = (raw.split(".")[1] || "").length;
+    const row = el.closest("li");
+    const delay = (row ? parseFloat(getComputedStyle(row).getPropertyValue("--d")) || 0 : 0) + 450;
+    const DURATION_MS = 1600;
+    el.textContent = (0).toFixed(places);
+    setTimeout(() => {
+      const start = performance.now();
+      const frame = (now) => {
+        const t = Math.min(1, (now - start) / DURATION_MS);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = (to * eased).toFixed(places);
+        if (t < 1) requestAnimationFrame(frame);
+        else el.textContent = raw;
+      };
+      requestAnimationFrame(frame);
+    }, delay);
+  };
+
   /* parts play top to bottom: each waits until it has scrolled up past the
      trigger line, and never starts before the part above it */
   if (!reduceMotion && canObserve) {
@@ -41,6 +64,7 @@
       played += 1;
       parts[played].classList.add("is-in");
       parts[played].querySelectorAll("[data-count-to]").forEach(countUp);
+      parts[played].querySelectorAll("[data-num]").forEach(countNum);
       /* a part already scrolled off the top has no audience, so don't wait on it */
       const seen = parts[played].getBoundingClientRect().bottom > 0;
       timer = setTimeout(playNext, seen ? GAP_MS : 0);
@@ -143,6 +167,18 @@
     }, { threshold: 0.4 });
     revealIo.observe(vc);
   }
+
+  /* RAIO finish switch: swaps the feature grid between Stealth Gray and Pearl White */
+  document.querySelectorAll(".raio-finish").forEach((group) => {
+    const swap = group.nextElementSibling;
+    group.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-finish]");
+      if (!btn) return;
+      const finish = btn.dataset.finish;
+      group.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      swap.querySelectorAll("img").forEach((img) => img.classList.toggle("is-on", img.dataset.finish === finish));
+    });
+  });
 
   /* HUD text and brackets are dark-on-tan, so flip each one while it is over a
      band. Checked per element, since the HUD's top and bottom cross at different times. */

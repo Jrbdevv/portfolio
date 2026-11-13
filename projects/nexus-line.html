@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/project.css">
   <link rel="stylesheet" href="../css/blueprint.css">
+  <link rel="stylesheet" href="../css/raio.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230c0c0f'/><polygon points='35,25 75,50 35,75' fill='%23D8FF3E'/></svg>">
 </head>
 <body>
@@ -339,6 +340,142 @@
              solar buyers. The campaigns drove $457K in combined B2B and B2C pipeline growth and
              535K+ video views.</p>
         </section>
+      </div>
+    </section>
+
+    <!-- RAIO: the next generation, in its own Stealth Gray launch look (css/raio.css).
+         Specs and prices are as listed on the live product page in November 2026. -->
+    <section class="raio-band" id="raio" aria-labelledby="raio-title">
+      <div class="raio-inner">
+        <header class="raio-head raio-fade" data-seq>
+          <span class="raio-kicker">The next generation · Now on pre-order</span>
+          <h2 id="raio-title"><img class="raio-wordmark" src="../assets/raio-wordmark.svg" width="1788" height="840" alt="BigBattery RAIO."> The whole system, in one cabinet.</h2>
+          <p>The Residential All-In-One puts a 14.7 kWh LiFePO₄ battery, a 7.68 kW inverter and up to
+             11.52 kW of solar input in a single cabinet 5.91 inches deep.</p>
+          <p><strong>I designed its exterior, built its product page and made its launch creative.</strong></p>
+        </header>
+
+        <!-- the stage: the launch shot as a backdrop, specs sliding in from either side of the cabinet.
+             Numbers are final in the HTML; js/blueprint.js counts them up when the stage plays. -->
+        <div class="raio-stage" data-seq>
+          <img class="raio-stage-bg" src="../assets/raio-stage.webp" width="2000" height="800" loading="lazy"
+               alt="A Stealth Gray RAIO cabinet standing in fog under a glowing RAIO sign">
+          <ul class="raio-stage-specs is-left">
+            <li style="--d: 0ms"><b><span data-num="5.91">5.91</span> in</b><small>Cabinet depth</small></li>
+            <li style="--d: 160ms"><b><span data-num="14.7">14.7</span> kWh</b><small>Capacity per unit</small></li>
+            <li style="--d: 320ms"><b><span data-num="7.68">7.68</span> kW</b><small>Inverter output</small></li>
+          </ul>
+          <ul class="raio-stage-specs is-right">
+            <li style="--d: 80ms"><b><span data-num="11.52">11.52</span> kW</b><small>Solar input, 3 MPPTs</small></li>
+            <li style="--d: 240ms"><b>IP<span data-num="66">66</span></b><small>NEMA 4X enclosure</small></li>
+            <li style="--d: 400ms"><b><span data-num="12">12</span> yrs</b><small>Limited warranty</small></li>
+          </ul>
+        </div>
+
+        <div class="raio-part raio-split">
+          <figure class="raio-cutaway raio-fade" data-seq>
+            <img src="../assets/raio-cutaway.webp" width="1024" height="1536" loading="lazy"
+                 alt="RAIO cutaway: the inverter (PCS) at the top, the battery management system below it, and two battery modules underneath">
+          </figure>
+          <div>
+            <span class="raio-kicker">The exterior</span>
+            <h3>Thinner than a Powerwall and designed for Americans to own their&nbsp;power.</h3>
+            <p class="raio-copy">At 5.91 inches deep, RAIO is slimmer than Tesla&rsquo;s Powerwall&nbsp;3 at 7.6&nbsp;inches.
+               I designed a sleek cabinet with a premium glass front panel, in Stealth Gray or Pearl White,
+               that mounts on a wall or stands on the floor. The cutaway shows how it stays that thin:
+               the inverter, the battery management system and two battery modules share one enclosure.</p>
+            <p class="raio-copy">The BigBattery app pairs with it, so homeowners can watch and run their own
+               energy instead of depending on someone else for their power. That's the idea behind
+               BigBattery's motto: <strong>Own Your Power.</strong></p>
+          </div>
+        </div>
+
+        <div class="raio-part">
+          <span class="raio-kicker">The product page</span>
+          <h3>No more researching batteries and inverters. Just one all-in-one system.</h3>
+          <p class="raio-copy">The page leads with a finish and a configuration rather than a spec sheet.
+             Buyers pick Stealth Gray or Pearl White, then one to five units, with capacity and price
+             updating as they go. A system customizer starts from the job (grid-tied, off-grid, golf
+             cart, RV, marine or industrial) and suggests the inverter and batteries for it, and
+             everything in the box is listed before the add-to-cart button.</p>
+          <figure class="raio-page raio-fade" data-seq>
+            <div class="raio-page-bar" aria-hidden="true"><i></i><i></i><i></i><span>bigbattery.com/products/bigbattery-raio-residential-all-in-one-home-ess-gray</span></div>
+            <img src="../assets/raio-page-buy.webp" width="1440" height="1430" loading="lazy"
+                 alt="The RAIO product page: gallery, color choice, the configuration picker from one to five batteries, and the purchase panel">
+            <figcaption>The live product page, November 2026</figcaption>
+          </figure>
+          <ol class="raio-tiers" data-seq aria-label="The five RAIO configurations, by capacity and price">
+              <li>
+                <div class="raio-tier-name">Base Home<small>1 battery</small></div>
+                <div class="raio-tier-track"><span class="raio-tier-bar" style="--v: 14.7; --d: 0ms"></span><span class="raio-tier-val" style="--v: 14.7; --d: 0ms"><b>14.7 kWh</b> · $7,950</span></div>
+              </li>
+              <li>
+                <div class="raio-tier-name">Whole Home<small>2 batteries</small></div>
+                <div class="raio-tier-track"><span class="raio-tier-bar" style="--v: 29.4; --d: 120ms"></span><span class="raio-tier-val" style="--v: 29.4; --d: 120ms"><b>29.4 kWh</b> · $14,925</span></div>
+              </li>
+              <li>
+                <div class="raio-tier-name">Pro Home<small>3 batteries</small></div>
+                <div class="raio-tier-track"><span class="raio-tier-bar" style="--v: 44.1; --d: 240ms"></span><span class="raio-tier-val" style="--v: 44.1; --d: 240ms"><b>44.1 kWh</b> · $21,900</span></div>
+              </li>
+              <li>
+                <div class="raio-tier-name">4-Battery System<small>4 batteries</small></div>
+                <div class="raio-tier-track"><span class="raio-tier-bar" style="--v: 58.8; --d: 360ms"></span><span class="raio-tier-val" style="--v: 58.8; --d: 360ms"><b>58.8 kWh</b> · $28,875</span></div>
+              </li>
+              <li>
+                <div class="raio-tier-name">5-Battery System<small>5 batteries</small></div>
+                <div class="raio-tier-track"><span class="raio-tier-bar" style="--v: 73.5; --d: 480ms"></span><span class="raio-tier-val" style="--v: 73.5; --d: 480ms"><b>73.5 kWh</b> · $35,850</span></div>
+              </li>
+          </ol>
+          <p class="raio-caption">Configurations and pre-order prices as listed on the product page</p>
+        </div>
+
+        <div class="raio-part">
+          <span class="raio-kicker">Launch creative</span>
+          <h3>One look, from banner to build site.</h3>
+          <p class="raio-copy">Feature grids for both finishes, launch films, lifestyle renders and the app
+             story, all built from the same dark, glowing look as the product itself.</p>
+          <div class="raio-finish" role="group" aria-label="Choose a finish">
+            <button type="button" aria-pressed="true" data-finish="gray"><i style="background: #2b2d31"></i>Stealth Gray</button>
+            <button type="button" aria-pressed="false" data-finish="white"><i style="background: #e9e9e6"></i>Pearl White</button>
+          </div>
+          <figure class="raio-swap">
+            <img class="is-on" data-finish="gray" src="../assets/raio-features-gray.webp" width="1600" height="706" loading="lazy"
+                 alt="RAIO feature grid in Stealth Gray: reliable backup, solar integration, generator and EV support, quiet operation, the app and the slim design">
+            <img data-finish="white" src="../assets/raio-features-white.webp" width="1600" height="706" loading="lazy"
+                 alt="RAIO feature grid in Pearl White: reliable backup, solar integration, generator and EV support, silent operation, the app and the slim design">
+          </figure>
+          <div class="raio-films">
+            <figure>
+              <video src="../assets/raio-film.mp4" poster="../assets/raio-film-poster.webp" controls playsinline preload="none"
+                     aria-label="RAIO launch film"></video>
+              <figcaption class="raio-caption">Launch film · with sound</figcaption>
+            </figure>
+            <figure>
+              <video src="../assets/raio-day-night.mp4" poster="../assets/raio-day-night-poster.webp" muted loop playsinline preload="none" data-autoplay-inview
+                     aria-label="Animated day-to-night energy flow from solar panels through RAIO into the home"></video>
+              <figcaption class="raio-caption">Day-to-night energy flow</figcaption>
+            </figure>
+          </div>
+          <!-- justified rows: each image grows by its own aspect ratio, so a row shares one height -->
+          <div class="raio-mosaic">
+            <div class="raio-row">
+              <img style="--a: 1.776" src="../assets/raio-life-modern.webp" width="1600" height="901" loading="lazy" alt="A Stealth Gray RAIO mounted on a modern home beside its gateway, under a solar roof">
+              <img style="--a: 1.6" src="../assets/raio-life-snow.webp" width="1600" height="1000" loading="lazy" alt="A RAIO and gateway on a timber-clad house in snow, next to an electric car">
+            </div>
+            <div class="raio-row">
+              <img style="--a: 0.903" src="../assets/raio-home-energy.webp" width="1000" height="1107" loading="lazy" alt="Your home energy, your rules: monitor solar, storage and home power in one place">
+              <img style="--a: 0.647" src="../assets/raio-app.webp" width="900" height="1391" loading="lazy" alt="See what powers your home: the app tracking solar, battery, grid and home energy">
+              <img style="--a: 1.776" src="../assets/raio-backup.webp" width="1600" height="901" loading="lazy" alt="Backup power where it matters: a cutaway house with essential circuits lit during an outage">
+            </div>
+            <div class="raio-row">
+              <img style="--a: 2.749" src="../assets/raio-launch-banner.webp" width="1600" height="582" loading="lazy" alt="RAIO launch banner: the glowing RAIO wordmark behind a black unit, with a 12-year warranty, 11.5 kW solar input and 14.7 kWh capacity">
+            </div>
+            <div class="raio-row">
+              <img style="--a: 2.263" src="../assets/raio-hero-banner.webp" width="1600" height="707" loading="lazy" alt="Own Your Power, Reduce Grid Reliance: a white RAIO at dusk with three solar strings and UL 9540 certification">
+            </div>
+          </div>
+          <p class="raio-note">RAIO is on pre-order, so there are no sales figures yet. They'll land here once it ships.</p>
+        </div>
       </div>
     </section>
 
