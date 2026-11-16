@@ -442,6 +442,7 @@ const REEL_CLIPS_2 = [
   { src: "assets/reel-eagle2.mp4",     aspect: "wide", tag: "EAGLE 2 PROMO" },
   { src: "assets/reel-liftloop.mp4",   aspect: "tall", tag: "APP PROMO" },
   { src: "assets/reel-lizard.mp4",     aspect: "wide", tag: "LIZARD SPOT" },
+  { src: "assets/reel-bf-sale.mp4",    aspect: "wide", tag: "BLACK FRIDAY SALE" },
   { src: "assets/reel-fishing.mp4",    aspect: "wide", tag: "MARINE SPOT" },
 ];
 
